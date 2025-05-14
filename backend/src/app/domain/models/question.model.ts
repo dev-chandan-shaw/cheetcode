@@ -10,7 +10,6 @@ export default class Question {
   private _schema: Schema = new Schema<IQuestion>({
     title: { type: String, required: true },
     link: { type: String, required: true },
-    isBookmarked: { type: Boolean, required: true },
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",

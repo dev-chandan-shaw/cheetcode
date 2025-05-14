@@ -8,6 +8,9 @@ export class QuestionRepository
   implements IQuestionRepository
 {
   constructor() {
-    super(new Question().getCollection());
+    super(new Question().getCollection()); // Initialize the collection in the parent class
+  }
+  async findByCategoryId(categoryId: string): Promise<IQuestion[]> {
+    return this._collection.find({ categoryId });
   }
 }

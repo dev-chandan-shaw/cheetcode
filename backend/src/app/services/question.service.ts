@@ -10,7 +10,22 @@ export class QuestionService
   extends Service<IQuestion, QuestionRepository>
   implements IQuestionService
 {
+  private repository: QuestionRepository = new QuestionRepository();
   constructor() {
     super(new QuestionRepository());
+  }
+  async getQuestionsByCategory(categoryId: string): Promise<IQuestion[]> {
+    console.log("Category ID:", categoryId);
+
+    if (!categoryId) {
+      throw new Error("Category ID is required.");
+    }
+
+    const questions = await this.repository.findByCategoryId(categoryId);
+    if (!questions || questions.length === 0) {
+      throw new Error("No questions found for the given category.");
+    }
+
+    return questions;
   }
 }
