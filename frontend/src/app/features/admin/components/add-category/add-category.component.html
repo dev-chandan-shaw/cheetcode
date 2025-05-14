@@ -1,0 +1,33 @@
+<div class="card p-fluid" style="max-width: 400px; margin: auto">
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col">
+      <input
+        id="name"
+        type="text"
+        pInputText
+        formControlName="name"
+        placeholder="Enter category name"
+      />
+      <small
+        *ngIf="
+          categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched
+        "
+        class="text-red-600"
+      >
+        Category name is required.
+      </small>
+    </div>
+    <div class="flex justify-end gap-2">
+      <p-button
+        label="Cancel"
+        rounded="true"
+        size="small"
+        variant="text"
+        severity="warn"
+      />
+      <p-button label="Save" rounded="true" size="small" type="submit" />
+    </div>
+  </form>
+</div>
+
+<p-toast></p-toast>

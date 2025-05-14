@@ -1,0 +1,16 @@
+<div
+  class="px-4 py-3 rounded-md flex items-center justify-between gap-2"
+  [ngClass]="{
+    'bg-[var(--p-surface-800)]': index() % 2 === 0
+  }"
+>
+  <p>{{ index() + 1 }}. {{ question()?.title }}</p>
+
+  <ng-container *ngIf="question()?.isBookmarked; else elseBlock">
+    <i class="pi pi-star-fill cursor-pointer" (click)="toggleBookmark()"></i>
+  </ng-container>
+
+  <ng-template #elseBlock>
+    <i class="pi pi-star cursor-pointer" (click)="toggleBookmark()"></i>
+  </ng-template>
+</div>
