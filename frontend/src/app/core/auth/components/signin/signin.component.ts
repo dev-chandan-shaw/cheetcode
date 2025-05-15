@@ -8,11 +8,18 @@ import {
 } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-signin',
-  imports: [ReactiveFormsModule, ButtonModule, CommonModule, InputTextModule],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    CommonModule,
+    InputTextModule,
+    FloatLabelModule,
+  ],
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.scss',
   providers: [MessageService],
@@ -27,5 +34,9 @@ export class SigninComponent {
     });
   }
 
-  onSubmit() {}
+  onSubmit() {
+    if (this.signinForm.valid) {
+      console.log(this.signinForm.value);
+    }
+  }
 }

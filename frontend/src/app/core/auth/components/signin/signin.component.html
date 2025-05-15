@@ -1,51 +1,66 @@
-<main class="grid grid-cols-1 h-screen">
-  <!-- <img
-    src="../../../../../assets/images/sign_in.jpg"
-    alt=""
-    class="h-full w-full object-cover"
-  /> -->
-  <form
-    [formGroup]="signinForm"
-    (ngSubmit)="onSubmit()"
-    class="flex flex-col gap-4"
-  >
-    <div class="flex flex-col">
-      <input
-        id="email"
-        type="email"
-        pInputText
-        formControlName="email"
-        placeholder="Enter your name"
+<main
+  class="flex flex-col md:flex-row justify-center items-center w-full h-dvh"
+>
+  <img src="assets/images/signin.svg" alt="" class="h-96 w-full md:flex-1" />
+  <div class="w-full flex-1">
+    <h1 class="text-3xl input-width px-8">Welcome Back!</h1>
+    <p class="input-width px-8 mb-8">Signin to your account</p>
+    <form
+      [formGroup]="signinForm"
+      (ngSubmit)="onSubmit()"
+      class="input-width px-8"
+    >
+      <div class="input-width">
+        <p-floatlabel variant="on">
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            style="width: 100%"
+          />
+          <label for="email">Email</label>
+        </p-floatlabel>
+        <p class="h-5">
+          <small
+            *ngIf="
+              signinForm.get('email')?.invalid &&
+              signinForm.get('email')?.touched
+            "
+            class="text-red-600 h-10"
+          >
+            Email is required.
+          </small>
+        </p>
+      </div>
+      <div class="">
+        <p-floatlabel variant="on">
+          <input
+            pInputText
+            id="password"
+            formControlName="password"
+            style="width: 100%"
+          />
+          <label for="password">Password</label>
+        </p-floatlabel>
+        <p class="h-5">
+          <small
+            *ngIf="
+              signinForm.get('password')?.invalid &&
+              signinForm.get('password')?.touched
+            "
+            class="text-red-600"
+          >
+            Password is required.
+          </small>
+        </p>
+      </div>
+      <p-button
+        label="Signin"
+        size="small"
+        type="submit"
+        styleClass="w-full mt-2"
+        [disabled]="signinForm.invalid"
       />
-      <small
-        *ngIf="
-          signinForm.get('email')?.invalid && signinForm.get('email')?.touched
-        "
-        class="text-red-600"
-      >
-        Email is required.
-      </small>
-    </div>
-    <div class="flex flex-col">
-      <input
-        id="password"
-        type="password"
-        pInputText
-        formControlName="password"
-        placeholder="Enter Password"
-      />
-      <small
-        *ngIf="
-          signinForm.get('password')?.invalid &&
-          signinForm.get('password')?.touched
-        "
-        class="text-red-600"
-      >
-        Password is required.
-      </small>
-    </div>
-    <div class="flex justify-end gap-2">
-      <p-button label="Signin" rounded="true" size="small" type="submit" />
-    </div>
-  </form>
+    </form>
+  </div>
 </main>
