@@ -1,39 +1,26 @@
-import { Component, computed, input, signal } from '@angular/core';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { Component, input, signal } from '@angular/core';
+import { QuestionCardComponent } from '../../../../shared/components/question-card/question-card.component';
+import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
+import { Category } from '../../../../shared/models/category';
+import { Question } from '../../../../shared/models/question';
+import { CommonModule } from '@angular/common';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
-import { QuestionCardComponent } from '../question-card/question-card.component';
-import { CommonModule } from '@angular/common';
-import { Question } from '../../models/question';
-import { ChipModule } from 'primeng/chip';
-import { TagModule } from 'primeng/tag';
-import {
-  AutoCompleteCompleteEvent,
-  AutoCompleteModule,
-} from 'primeng/autocomplete';
-import { FormsModule } from '@angular/forms';
-import { Category } from '../../models/category';
+
 @Component({
-  selector: 'app-question-list',
+  selector: 'app-practice',
   imports: [
-    InputGroupAddonModule,
-    InputGroupModule,
+    QuestionCardComponent,
+    CommonModule,
     IconFieldModule,
     InputIconModule,
     InputTextModule,
-    QuestionCardComponent,
-    AutoCompleteModule,
-    FormsModule,
-    CommonModule,
-    ChipModule,
-    TagModule,
   ],
-  templateUrl: './question-list.component.html',
-  styleUrl: './question-list.component.scss',
+  templateUrl: './practice.component.html',
+  styleUrl: './practice.component.scss',
 })
-export class QuestionListComponent {
+export class PracticeComponent {
   questions = input<Question[]>([
     {
       id: 1,

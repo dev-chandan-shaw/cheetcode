@@ -1,0 +1,36 @@
+<section class="flex gap-2 flex-wrap my-4">
+  @for (category of categories(); track $index) {
+  <p
+    severity="secondary"
+    rounded="true"
+    (click)="selectCategory(category)"
+    class="cursor-pointer px-4 py-1 rounded-3xl"
+    [ngClass]="getSelectedCategoryBgColor(category)"
+  >
+    {{ category.name }}
+  </p>
+  }
+</section>
+<section class="flex justify-between items-center">
+  <p-iconfield styleClass="rounded-3xl">
+    <p-inputicon styleClass="pi pi-search" />
+    <input class="rounded-3xl" type="text" pInputText placeholder="Search" />
+  </p-iconfield>
+  <span
+    class="material-symbols-outlined hover:bg-zinc-700 p-2 rounded-full cursor-pointer"
+    (click)="pickRandomQuestion()"
+  >
+    {{ pickedQuestion ? "shuffle_on" : "shuffle" }}
+  </span>
+</section>
+<section class="mt-8">
+  <ng-container *ngIf="pickedQuestion; else elseBlock">
+    <app-question-card [question]="pickedQuestion" [index]="0" />
+  </ng-container>
+
+  <ng-template #elseBlock>
+    <ng-container *ngFor="let question of questions(); let i = index">
+      <app-question-card [question]="question" [index]="i" />
+    </ng-container>
+  </ng-template>
+</section>

@@ -1,3 +1,18 @@
 <div class="container">
-  <app-question-list />
+  <div class="card">
+    <p-tabs value="0">
+      <p-tablist>
+        <p-tab value="0">Practice</p-tab>
+        <p-tab value="1">Revision</p-tab>
+      </p-tablist>
+      <p-tabpanels>
+        <p-tabpanel value="0">
+          <app-practice />
+        </p-tabpanel>
+        <p-tabpanel value="1">
+          <app-revision />
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
 </div>
