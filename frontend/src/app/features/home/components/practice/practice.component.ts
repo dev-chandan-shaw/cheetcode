@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-practice',
@@ -16,6 +17,7 @@ import { InputTextModule } from 'primeng/inputtext';
     IconFieldModule,
     InputIconModule,
     InputTextModule,
+    FormsModule,
   ],
   templateUrl: './practice.component.html',
   styleUrl: './practice.component.scss',
@@ -114,6 +116,23 @@ export class PracticeComponent {
   pickedQuestion: null | Question = null;
 
   selectedCategory: null | Category = null;
+
+  filteredQuestions: Question[] = this.questions();
+
+  searchQuery = '';
+
+  serchQuestion() {
+    this.filteredQuestions = this.questions().filter((question) => {
+      return question.title
+        .toLowerCase()
+        .includes(this.searchQuery.toLowerCase());
+    });
+  }
+
+  resetFilter() {
+    this.filteredQuestions = this.questions();
+    this.searchQuery = '';
+  }
 
   selectCategory(category: Category) {
     this.selectedCategory = category;

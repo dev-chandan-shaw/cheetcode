@@ -12,7 +12,12 @@
           {{ question.title }}
         </span>
       </p>
-      <p-button icon="pi pi-check" [rounded]="true" variant="text" />
+      <p-button
+        (onClick)="markAsDone(question)"
+        icon="pi pi-check"
+        [rounded]="true"
+        variant="text"
+      />
     </div>
   </div>
 </ng-container>

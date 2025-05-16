@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -19,6 +20,7 @@ import { InputTextModule } from 'primeng/inputtext';
     CommonModule,
     InputTextModule,
     FloatLabelModule,
+    RouterModule,
   ],
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.scss',

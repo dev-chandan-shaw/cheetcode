@@ -14,7 +14,19 @@
 <section class="flex justify-between items-center">
   <p-iconfield styleClass="rounded-3xl">
     <p-inputicon styleClass="pi pi-search" />
-    <input class="rounded-3xl" type="text" pInputText placeholder="Search" />
+    <input
+      class="rounded-3xl"
+      type="text"
+      [(ngModel)]="searchQuery"
+      pInputText
+      placeholder="Search"
+      (ngModelChange)="serchQuestion()"
+    />
+    <p-inputicon
+      (click)="resetFilter()"
+      *ngIf="searchQuery.length > 0"
+      styleClass="pi pi-times cursor-pointer"
+    />
   </p-iconfield>
   <span
     class="material-symbols-outlined hover:bg-zinc-700 p-2 rounded-full cursor-pointer"
@@ -29,7 +41,7 @@
   </ng-container>
 
   <ng-template #elseBlock>
-    <ng-container *ngFor="let question of questions(); let i = index">
+    <ng-container *ngFor="let question of filteredQuestions; let i = index">
       <app-question-card [question]="question" [index]="i" />
     </ng-container>
   </ng-template>

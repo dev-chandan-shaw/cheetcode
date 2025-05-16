@@ -9,16 +9,18 @@
       question().title
     }}</span>
   </p>
-  <p-button
-    [icon]="isMarkedForRevision() ? 'pi pi-star-fill' : 'pi pi-star'"
-    [rounded]="true"
-    (onClick)="toggleRevision()"
-    variant="text"
-  />
-  <p-button
-    [icon]="isBookmarked() ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
-    (onClick)="toggleBookmark()"
-    variant="text"
-    [rounded]="true"
-  />
+  <div class="flex items-center justify-center gap-4">
+    <p-button
+      [icon]="isMarkedForRevision() ? 'pi pi-star-fill' : 'pi pi-star'"
+      [rounded]="true"
+      (onClick)="toggleRevision()"
+      variant="text"
+    />
+    <p-button
+      [icon]="isBookmarked() ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
+      (onClick)="toggleBookmark()"
+      variant="text"
+      [rounded]="true"
+    />
+  </div>
 </div>

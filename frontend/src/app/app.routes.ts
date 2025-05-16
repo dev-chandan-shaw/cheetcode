@@ -24,6 +24,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'signup',
+    loadComponent: () =>
+      import('./core/auth/components/signup/signup.component').then(
+        (m) => m.SignupComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'home',
   },
