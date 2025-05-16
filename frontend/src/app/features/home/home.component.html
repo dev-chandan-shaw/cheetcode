@@ -1,18 +1,16 @@
-<div class="container">
-  <div class="card">
-    <p-tabs value="0">
-      <p-tablist>
-        <p-tab value="0">Practice</p-tab>
-        <p-tab value="1">Revision</p-tab>
-      </p-tablist>
-      <p-tabpanels>
-        <p-tabpanel value="0">
-          <app-practice />
-        </p-tabpanel>
-        <p-tabpanel value="1">
-          <app-revision />
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
-  </div>
+<div class="container min-h-[100dvh]">
+  <p-tabs value="0" class="flex-1 flex flex-col min-h-[100dvh]">
+    <p-tablist>
+      <p-tab value="0">Practice</p-tab>
+      <p-tab value="1">Revision</p-tab>
+    </p-tablist>
+    <p-tabpanels class="flex-1">
+      <p-tabpanel value="0" class="h-full">
+        <app-practice />
+      </p-tabpanel>
+      <p-tabpanel value="1" class="h-full">
+        <app-revision />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
 </div>
