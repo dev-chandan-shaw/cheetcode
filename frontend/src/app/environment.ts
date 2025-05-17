@@ -1,6 +1,6 @@
 const environment = {
     production: false,
-    api: 'http://localhost:8080/api',
+    api: 'https://cheetcode-ns47.onrender.com/api',
 };
 
 export default environment;
