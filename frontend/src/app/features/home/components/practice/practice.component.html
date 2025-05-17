@@ -41,7 +41,7 @@
   </ng-container>
 
   <ng-template #elseBlock>
-    <ng-container *ngFor="let question of filteredQuestions; let i = index">
+    <ng-container *ngFor="let question of filteredQuestions(); let i = index">
       <app-question-card [question]="question" [index]="i" />
     </ng-container>
   </ng-template>

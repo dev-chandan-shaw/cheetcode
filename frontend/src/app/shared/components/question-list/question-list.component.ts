@@ -104,22 +104,7 @@ export class QuestionListComponent {
   ]);
 
   categories = signal<Category[]>([
-    {
-      id: 1,
-      name: 'HTML',
-    },
-    {
-      id: 2,
-      name: 'CSS',
-    },
-    {
-      id: 3,
-      name: 'Javascript',
-    },
-    {
-      id: 4,
-      name: 'Angular',
-    },
+    
   ]);
 
   filteredCategories: Category[] = [];

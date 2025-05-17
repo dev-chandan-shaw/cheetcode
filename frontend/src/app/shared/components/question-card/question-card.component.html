@@ -4,11 +4,11 @@
     'bg-[var(--p-surface-800)]': index() % 2 === 0
   }"
 >
-  <p [routerLink]="question().link" class="w-[70%]">
+  <a [href]="question().link" target="_blank" class="w-[70%]">
     <span class="cursor-pointer hover:text-green-300">{{
       question().title
     }}</span>
-  </p>
+  </a>
   <div class="flex items-center justify-center gap-4">
     <p-button
       [icon]="isMarkedForRevision() ? 'pi pi-star-fill' : 'pi pi-star'"

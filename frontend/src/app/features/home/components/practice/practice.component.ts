@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, input, linkedSignal, signal } from '@angular/core';
 import { QuestionCardComponent } from '../../../../shared/components/question-card/question-card.component';
 import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Category } from '../../../../shared/models/category';
@@ -92,55 +92,39 @@ export class PracticeComponent {
     },
   ]);
 
-  categories = signal<Category[]>([
-    {
-      id: 1,
-      name: 'HTML',
-    },
-    {
-      id: 2,
-      name: 'CSS',
-    },
-    {
-      id: 3,
-      name: 'Javascript',
-    },
-    {
-      id: 4,
-      name: 'Angular',
-    },
-  ]);
+  categories = input.required<Category[]>();
 
   filteredCategories: Category[] = [];
 
   pickedQuestion: null | Question = null;
 
-  selectedCategory: null | Category = null;
+  selectedCategory = linkedSignal(() => this.categories()[0]);
 
-  filteredQuestions: Question[] = this.questions();
+  filteredQuestions = linkedSignal(() => this.selectedCategory().questions);
 
   searchQuery = '';
 
   serchQuestion() {
-    this.filteredQuestions = this.questions().filter((question) => {
-      return question.title
-        .toLowerCase()
-        .includes(this.searchQuery.toLowerCase());
-    });
+    this.filteredQuestions.set(
+      this.selectedCategory().questions.filter((question) => {
+        return question.title
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase());
+      })
+    );
   }
 
   resetFilter() {
-    this.filteredQuestions = this.questions();
+    this.filteredQuestions.set(this.selectedCategory().questions);
     this.searchQuery = '';
   }
 
   selectCategory(category: Category) {
-    this.selectedCategory = category;
-    console.log('Category selected:', category);
+    this.selectedCategory.set(category);
   }
 
   getSelectedCategoryBgColor(category: Category) {
-    return this.selectedCategory?.id === category.id
+    return this.selectedCategory()?.id === category.id
       ? 'bg-white text-zinc-800'
       : 'bg-zinc-700';
   }
@@ -150,8 +134,8 @@ export class PracticeComponent {
       this.pickedQuestion = null;
       return;
     }
-    const randomIndex = Math.floor(Math.random() * this.questions().length);
-    this.pickedQuestion = this.questions()[randomIndex];
+    const randomIndex = Math.floor(Math.random() * this.selectedCategory().questions.length);
+    this.pickedQuestion = this.selectedCategory().questions[randomIndex];
   }
 
   search(event: AutoCompleteCompleteEvent) {

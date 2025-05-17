@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -11,6 +11,7 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -28,6 +29,7 @@ import { InputTextModule } from 'primeng/inputtext';
 })
 export class SignupComponent {
   signupForm: FormGroup;
+  private _authService = inject(AuthService);
 
   constructor(private fb: FormBuilder, private messageService: MessageService) {
     this.signupForm = this.fb.group({
@@ -41,6 +43,7 @@ export class SignupComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       console.log(this.signupForm.value);
+      this._authService.signup(this.signupForm.value);
     }
   }
 }
