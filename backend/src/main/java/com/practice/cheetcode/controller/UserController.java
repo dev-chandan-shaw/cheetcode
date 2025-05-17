@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -58,5 +60,10 @@ public class UserController {
         loginResponse.setLastName(user.getLastName());
         loginResponse.setToken(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
+    }
+
+    @GetMapping("/ping")
+    public ResponseEntity<?> ping() {
+        return ResponseEntity.ok(new Date());
     }
 }
