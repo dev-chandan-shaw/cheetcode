@@ -1,14 +1,10 @@
-# Use a lightweight JDK base image
-FROM eclipse-temurin:17-jdk-alpine
+FROM maven:3.8.5-openjdk-17 AS build
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Set the working directory inside the container
-WORKDIR /app
 
-# Copy the jar file into the container
-COPY target/*.jar app.jar
-
-# Expose the default port (update if your app runs on a different port)
+# Production stage
+FROM openjdk:17-jdk-slim
+COPY --from=build /target/cheetcode.jar app.jar
 EXPOSE 8080
-
-# Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
