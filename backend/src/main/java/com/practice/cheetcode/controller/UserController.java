@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -32,6 +33,9 @@ public class UserController {
     @Autowired
     private JWTService jwtService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
     public ResponseEntity<?> getUser(@RequestBody LoginRequest req) {
         Optional<User> userOptional = userRepository.findByEmail(req.getEmail());
@@ -39,10 +43,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is not registered");
         }
         User user = userOptional.get();
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password");
+        }
         String token = jwtService.generateToken(user.getEmail());
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setFirstName(user.getFirstName());
         loginResponse.setLastName(user.getLastName());
+        loginResponse.setEmail(user.getEmail());
         loginResponse.setToken(token);
         return ResponseEntity.ok(loginResponse);
     }
@@ -51,7 +59,7 @@ public class UserController {
     public ResponseEntity<?> signUp(@RequestBody CreateUser request) {
         var existedUser = userRepository.findByEmail(request.getEmail().toLowerCase(Locale.ROOT));
         if (existedUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is registered");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already registered");
         }
         var user = customUserDetailsService.createUser(request);
         String token = jwtService.generateToken(user.getEmail());
@@ -59,6 +67,7 @@ public class UserController {
         loginResponse.setFirstName(user.getFirstName());
         loginResponse.setLastName(user.getLastName());
         loginResponse.setToken(token);
+        loginResponse.setEmail(user.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
     }
 

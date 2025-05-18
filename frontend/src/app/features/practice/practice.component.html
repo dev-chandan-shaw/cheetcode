@@ -1,0 +1,37 @@
+@if (isCategoriesLoading()) {
+<p-progressbar mode="indeterminate" [style]="{ height: '4px' }" />
+} @else {
+<div class="m-auto w-[min(100%,800px)]  min-h-[calc(100vh-76px)] ">
+  <section class="flex gap-2 flex-wrap my-4">
+    @for (category of categories(); track category.id) {
+    <p-button (click)="selectCategory(category)"
+      [severity]="selectedCategory().id === category.id ? 'primary' : 'secondary'" [label]="category.name"
+      [rounded]="true" />
+    }
+  </section>
+  <section class="flex justify-between items-center">
+    <p-iconfield styleClass="rounded-3xl">
+      <p-inputicon styleClass="pi pi-search" />
+      <input class="rounded-3xl" type="text" [(ngModel)]="searchQuery" pInputText placeholder="Search"
+        (ngModelChange)="serchQuestion()" />
+      <p-inputicon (click)="resetFilter()" *ngIf="searchQuery.length > 0" styleClass="pi pi-times cursor-pointer" />
+    </p-iconfield>
+    <span class="material-symbols-outlined hover:bg-zinc-700 p-2 rounded-full cursor-pointer"
+      (click)="pickRandomQuestion()">
+      {{ pickedQuestion ? "shuffle_on" : "shuffle" }}
+    </span>
+  </section>
+  <section class="mt-4">
+    <ng-container *ngIf="pickedQuestion; else elseBlock">
+      <app-question-card [question]="pickedQuestion" [index]="0" />
+    </ng-container>
+
+    <ng-template #elseBlock>
+      <ng-container *ngFor="let question of filteredQuestions(); let i = index">
+        <app-question-card [question]="question" [index]="i" />
+      </ng-container>
+    </ng-template>
+  </section>
+</div>
+
+}

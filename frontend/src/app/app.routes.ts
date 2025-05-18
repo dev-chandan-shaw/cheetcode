@@ -1,16 +1,21 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { LayoutComponent } from './core/components/layout/layout.component';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'home',
+    redirectTo: 'practice',
   },
   {
-    path: 'home',
-    loadComponent: () =>
-      import('./features/home/home.component').then((m) => m.HomeComponent),
+     path: '',
+    component: LayoutComponent,
+    children: [
+      { path: 'practice', loadComponent: () => import('./features/practice/practice.component').then((m) => m.PracticeComponent) },
+      { path: 'revision', loadComponent: () => import('./features/revision/revision.component').then((m) => m.RevisionComponent) },
+      // more child routes
+    ],
     canActivate: [authGuard],
   },
   {

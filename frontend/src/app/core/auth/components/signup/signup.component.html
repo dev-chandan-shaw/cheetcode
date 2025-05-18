@@ -1,95 +1,67 @@
 <main class="flex f justify-center items-center w-full h-dvh">
+  <p-toast></p-toast>
+  
   <div class="w-full flex-1 flex items-center flex-col">
     <h1 class="text-3xl input-width px-8 mb-6">Sign Up!</h1>
-    <form
-      [formGroup]="signupForm"
-      (ngSubmit)="onSubmit()"
-      class="input-width px-8"
-    >
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="input-width px-8">
       <div class="input-width">
         <p-floatlabel variant="on">
-          <input
-            pInputText
-            id="firstName"
-            formControlName="firstName"
-            style="width: 100%"
-          />
+          <input pInputText id="firstName" formControlName="firstName" style="width: 100%" />
           <label for="firstName">First Name</label>
         </p-floatlabel>
         <p class="h-8">
-          <small
-            *ngIf="
+          <small *ngIf="
               signupForm.get('firstName')?.invalid &&
               signupForm.get('firstName')?.touched
-            "
-            class="text-red-600 h-10"
-          >
+            " class="text-red-600 h-10">
             First Name is required.
           </small>
         </p>
       </div>
       <div class="input-width">
         <p-floatlabel variant="on">
-          <input
-            pInputText
-            id="lastName"
-            formControlName="lastName"
-            style="width: 100%"
-          />
+          <input pInputText id="lastName" formControlName="lastName" style="width: 100%" />
           <label for="firstName">Last Name</label>
         </p-floatlabel>
         <p class="h-8">
-          <small
-            *ngIf="
+          <small *ngIf="
               signupForm.get('lastName')?.invalid &&
               signupForm.get('lastName')?.touched
-            "
-            class="text-red-600 h-10"
-          >
+            " class="text-red-600 h-10">
             Last Name is required.
           </small>
         </p>
       </div>
       <div class="input-width">
         <p-floatlabel variant="on">
-          <input
-            pInputText
-            id="email"
-            formControlName="email"
-            style="width: 100%"
-          />
+          <input pInputText id="email" type="email" formControlName="email" style="width: 100%" />
           <label for="email">Email</label>
         </p-floatlabel>
         <p class="h-8">
-          <small
-            *ngIf="
-              signupForm.get('email')?.invalid &&
-              signupForm.get('email')?.touched
-            "
-            class="text-red-600 h-10"
-          >
+          <small *ngIf="
+              signupForm.get('email')?.touched &&
+              signupForm.get('email')?.errors?.['required']
+            " class="text-red-600 h-10">
             Email is required.
+          </small>
+          <small *ngIf="
+              signupForm.get('email')?.touched &&
+              signupForm.get('email')?.errors?.['email']
+            " class="text-red-600 h-10">
+            Enter a valid email.
           </small>
         </p>
       </div>
       <div class="">
         <p-floatlabel variant="on">
-          <input
-            pInputText
-            id="password"
-            formControlName="password"
-            style="width: 100%"
-          />
+          <input pInputText id="password" type="password" formControlName="password" style="width: 100%" />
           <label for="password">Password</label>
         </p-floatlabel>
         <p class="h-8">
-          <small
-            *ngIf="
+          <small *ngIf="
               signupForm.get('password')?.invalid &&
               signupForm.get('password')?.touched
-            "
-            class="text-red-600"
-          >
+            " class="text-red-600">
             Password is required.
           </small>
         </p>
@@ -97,18 +69,13 @@
       <p class="text-sm text-right">
         Already have an account?
         <span>
-          <a routerLink="/signin" class="text-bold text-lg cursor-pointer"
-            >Signin</a
-          >
+          <a routerLink="/signin" class="text-bold text-lg cursor-pointer">Signin</a>
         </span>
       </p>
-      <p-button
-        label="signup"
-        size="small"
-        type="submit"
-        styleClass="w-full mt-2"
-        [disabled]="signupForm.invalid"
-      />
+      <p-button label="signup" size="small" type="submit" styleClass="w-full mt-2" [disabled]="signupForm.invalid" />
     </form>
+  </div>
+  <div *ngIf="isLoading() " class="h-dvh w-full flex items-center justify-center backdrop-brightness-50  fixed">
+    <p-progress-spinner ariaLabel="loading" />
   </div>
 </main>

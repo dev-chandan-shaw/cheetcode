@@ -8,11 +8,18 @@ import { CategoryApiService } from "./category.api.service";
 export class CategoryService {
     private _categories = signal<Category[]>([]);
     private _categoryApiService = inject(CategoryApiService);
+    private isLoading = signal<boolean>(false);
 
     fetchCategories() {
+        this.isLoading.set(true);
         this._categoryApiService.getCategories().subscribe((categories) => {
             this._categories.set(categories);
+            this.isLoading.set(false);
         });
+    }
+
+    isLoadingCategories() {
+        return this.isLoading;
     }
 
     getCategories() : Signal<Category[]> {

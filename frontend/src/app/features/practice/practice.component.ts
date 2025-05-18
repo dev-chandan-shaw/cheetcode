@@ -1,13 +1,17 @@
-import { Component, input, linkedSignal, signal } from '@angular/core';
-import { QuestionCardComponent } from '../../../../shared/components/question-card/question-card.component';
+import { Component, inject, input, linkedSignal, OnInit, signal } from '@angular/core';
+import { QuestionCardComponent } from '../../shared/components/question-card/question-card.component';
 import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
-import { Category } from '../../../../shared/models/category';
-import { Question } from '../../../../shared/models/question';
+import { Category } from '../../shared/models/category';
+import { Question } from '../../shared/models/question';
 import { CommonModule } from '@angular/common';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
+import { ChipModule } from 'primeng/chip';
+import { ButtonModule } from 'primeng/button';
+import { CategoryService } from '../../shared/services/category/category.service';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'app-practice',
@@ -18,81 +22,17 @@ import { FormsModule } from '@angular/forms';
     InputIconModule,
     InputTextModule,
     FormsModule,
+    ChipModule,
+    ButtonModule,
+    CommonModule,
+    ProgressBarModule
   ],
   templateUrl: './practice.component.html',
   styleUrl: './practice.component.scss',
 })
-export class PracticeComponent {
-  questions = input<Question[]>([
-    {
-      id: 1,
-      title: 'What is your favorite color?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 2,
-      title: 'What is your favorite food?',
-      link: '',
-      isBookmarked: true,
-    },
-    {
-      id: 3,
-      title: 'What is your favorite movie?',
-      link: '',
-      isBookmarked: true,
-    },
-    {
-      id: 4,
-      title: 'Where do you live?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 5,
-      title: 'What is your hobby?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 6,
-      title: 'What is your favorite book?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 7,
-      title: 'What is your dream job?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 8,
-      title: 'What is your favorite season of the year?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 9,
-      title: 'What language do you speak?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 10,
-      title: 'What is your favorite sport?',
-      link: '',
-      isBookmarked: false,
-    },
-    {
-      id: 11,
-      title: 'What is your favorite vacation destination?',
-      link: '',
-      isBookmarked: false,
-    },
-  ]);
-
-  categories = input.required<Category[]>();
+export class PracticeComponent implements OnInit {
+  private readonly _categoryService = inject(CategoryService);
+  categories = this._categoryService.getCategories();
 
   filteredCategories: Category[] = [];
 
@@ -103,6 +43,12 @@ export class PracticeComponent {
   filteredQuestions = linkedSignal(() => this.selectedCategory().questions);
 
   searchQuery = '';
+
+  isCategoriesLoading = this._categoryService.isLoadingCategories();
+
+  ngOnInit(): void {
+    this._categoryService.fetchCategories();
+  }
 
   serchQuestion() {
     this.filteredQuestions.set(
@@ -125,7 +71,7 @@ export class PracticeComponent {
 
   getSelectedCategoryBgColor(category: Category) {
     return this.selectedCategory()?.id === category.id
-      ? 'bg-white text-zinc-800'
+      ? 'bg-[var(--p-primary-400)] text-black'
       : 'bg-zinc-700';
   }
 

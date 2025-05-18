@@ -9,7 +9,8 @@ import environment from '../../environment';
 export class SavedQuestionService {
   private _http = inject(HttpClient);
   private readonly _baseUrl = environment.api;
-  questions = signal<Question[]>([]);
+  private questions = signal<Question[]>([]);
+  isLoading = signal<boolean>(false);
   savedQuestionState = linkedSignal(() => {
     const set = new Set<number>();
     this.questions().forEach((question) => {
@@ -20,11 +21,17 @@ export class SavedQuestionService {
 
 
   fetchQuestions() {
+    this.isLoading.set(true);
     this._http
       .get<Question[]>(`${this._baseUrl}/saved-question`)
       .subscribe((questions) => {
         this.questions.set(questions);
+        this.isLoading.set(false);
       });
+  }
+
+  getQuestions(): Signal<Question[]> {
+    return this.questions;
   }
 
   getSavedQuestionState(): Signal<Set<number>> {
@@ -34,14 +41,10 @@ export class SavedQuestionService {
   addQuestion(question: Question) {
   // Optimistically update UI
   const prevSavedSet = new Set(this.savedQuestionState());
-  const prevQuestions = [...this.questions()];
 
   const updatedSet = new Set(prevSavedSet);
   updatedSet.add(question.id);
   this.savedQuestionState.set(updatedSet);
-
-  const updatedQuestions = [...prevQuestions, question];
-  this.questions.set(updatedQuestions);
 
   // Fire the API call
   this._http.post(`${this._baseUrl}/saved-question?questionId=${question.id}`, {}).subscribe({
@@ -51,7 +54,6 @@ export class SavedQuestionService {
     error: () => {
       // Rollback the changes on failure
       this.savedQuestionState.set(prevSavedSet);
-      this.questions.set(prevQuestions);
       // Optional: Show error message to user
       console.error('Failed to save question.');
     },
