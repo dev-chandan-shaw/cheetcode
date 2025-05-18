@@ -1,7 +1,7 @@
 @if (isCategoriesLoading()) {
 <p-progressbar mode="indeterminate" [style]="{ height: '4px' }" />
 } @else {
-<div class="m-auto w-[min(100%,800px)]  min-h-[calc(100vh-76px)] ">
+<div class="m-auto w-[min(100%,800px)]  min-h-[calc(100vh-76px)] px-2">
   <section class="flex gap-2 flex-wrap my-4">
     @for (category of categories(); track category.id) {
     <p-button (click)="selectCategory(category)"

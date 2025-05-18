@@ -12,6 +12,8 @@ import { ChipModule } from 'primeng/chip';
 import { ButtonModule } from 'primeng/button';
 import { CategoryService } from '../../shared/services/category/category.service';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { SavedQuestionService } from '../../shared/services/saved-question.service';
+import { ImportantQuestionService } from '../../shared/services/startedQuestion.service';
 
 @Component({
   selector: 'app-practice',
@@ -32,6 +34,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 })
 export class PracticeComponent implements OnInit {
   private readonly _categoryService = inject(CategoryService);
+  private readonly _savedQuestionService = inject(SavedQuestionService);
+  private readonly _importantQuestionService = inject(ImportantQuestionService);
   categories = this._categoryService.getCategories();
 
   filteredCategories: Category[] = [];
@@ -48,6 +52,8 @@ export class PracticeComponent implements OnInit {
 
   ngOnInit(): void {
     this._categoryService.fetchCategories();
+    this._savedQuestionService.fetchQuestions();
+    this._importantQuestionService.fetchQuestions();
   }
 
   serchQuestion() {
