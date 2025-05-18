@@ -14,6 +14,7 @@ import { CategoryService } from '../../shared/services/category/category.service
 import { ProgressBarModule } from 'primeng/progressbar';
 import { SavedQuestionService } from '../../shared/services/saved-question.service';
 import { ImportantQuestionService } from '../../shared/services/startedQuestion.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-practice',
@@ -36,11 +37,10 @@ export class PracticeComponent implements OnInit {
   private readonly _categoryService = inject(CategoryService);
   private readonly _savedQuestionService = inject(SavedQuestionService);
   private readonly _importantQuestionService = inject(ImportantQuestionService);
+  private readonly _router = inject(Router);
   categories = this._categoryService.getCategories();
 
   filteredCategories: Category[] = [];
-
-  pickedQuestion: null | Question = null;
 
   selectedCategory = linkedSignal(() => this.categories()[0]);
 
@@ -82,12 +82,11 @@ export class PracticeComponent implements OnInit {
   }
 
   pickRandomQuestion() {
-    if (this.pickedQuestion) {
-      this.pickedQuestion = null;
-      return;
-    }
     const randomIndex = Math.floor(Math.random() * this.selectedCategory().questions.length);
-    this.pickedQuestion = this.selectedCategory().questions[randomIndex];
+    const question = this.selectedCategory().questions[randomIndex];
+    if (question.link) {
+      window.open(question.link, '_blank');
+    }
   }
 
   search(event: AutoCompleteCompleteEvent) {

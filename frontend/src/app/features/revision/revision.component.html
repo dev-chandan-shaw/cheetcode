@@ -9,11 +9,11 @@
         class="px-4 py-3 rounded-md flex items-center justify-between gap-8" [ngClass]="{
         'bg-[var(--p-surface-800)]': index % 2 === 0
       }">
-        <p [routerLink]="question.link" class="w-[70%]">
+        <a [href]="question.link" target="_blank" class="w-[70%]">
           <span class="cursor-pointer hover:text-green-300">
             {{ question.title }}
           </span>
-        </p>
+        </a>
         <p-button (onClick)="markAsDone(question)" icon="pi pi-check" [rounded]="true" variant="text" />
       </div>
     </div>

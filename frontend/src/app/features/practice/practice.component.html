@@ -18,19 +18,13 @@
     </p-iconfield>
     <span class="material-symbols-outlined hover:bg-zinc-700 p-2 rounded-full cursor-pointer"
       (click)="pickRandomQuestion()">
-      {{ pickedQuestion ? "shuffle_on" : "shuffle" }}
+      {{"shuffle" }}
     </span>
   </section>
   <section class="mt-4">
-    <ng-container *ngIf="pickedQuestion; else elseBlock">
-      <app-question-card [question]="pickedQuestion" [index]="0" />
+    <ng-container *ngFor="let question of filteredQuestions(); let i = index">
+      <app-question-card [question]="question" [index]="i" />
     </ng-container>
-
-    <ng-template #elseBlock>
-      <ng-container *ngFor="let question of filteredQuestions(); let i = index">
-        <app-question-card [question]="question" [index]="i" />
-      </ng-container>
-    </ng-template>
   </section>
 </div>
 

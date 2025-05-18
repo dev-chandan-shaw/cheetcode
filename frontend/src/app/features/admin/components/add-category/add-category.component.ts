@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Output } from '@angular/core';
+import { Component, inject, Output } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
@@ -8,8 +8,10 @@ import {
 } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
+import { CategoryService } from '../../../../shared/services/category/category.service';
 
 @Component({
   selector: 'app-add-category',
@@ -25,8 +27,9 @@ import { ToastModule } from 'primeng/toast';
   providers: [MessageService],
 })
 export class AddCategoryComponent {
-  @Output() isCategoryModalOpen = false;
   categoryForm: FormGroup;
+  private _dialogRef = inject(DynamicDialogRef);
+  private _categoryService = inject(CategoryService);
 
   constructor(private fb: FormBuilder, private messageService: MessageService) {
     this.categoryForm = this.fb.group({
@@ -37,16 +40,13 @@ export class AddCategoryComponent {
   onSubmit() {
     if (this.categoryForm.valid) {
       const category = this.categoryForm.value;
-      // You can send this to a backend service
-      console.log('Category Added:', category);
-
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Category added successfully!',
-      });
-
-      this.categoryForm.reset();
+      this._categoryService.addCategory(category.name).subscribe(() => {
+        this.onClose();
+      })
     }
+  }
+
+  onClose() {
+    this._dialogRef.close();
   }
 }

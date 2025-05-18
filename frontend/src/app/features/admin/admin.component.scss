@@ -1,0 +1,19 @@
+li {
+    padding: 1rem;
+    cursor: pointer;
+    margin: .5rem;
+    border: 2px solid #2d2b2b;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li:hover {
+    background-color: var(--p-primary-600);
+}
+
+ul {
+    width: min(500px, 100%);
+    margin: auto;
+}

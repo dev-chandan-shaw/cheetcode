@@ -14,6 +14,7 @@ export const routes: Routes = [
     children: [
       { path: 'practice', loadComponent: () => import('./features/practice/practice.component').then((m) => m.PracticeComponent) },
       { path: 'revision', loadComponent: () => import('./features/revision/revision.component').then((m) => m.RevisionComponent) },
+      {path: 'admin', loadComponent: () => import('./features/admin/admin.component').then((m) => m.AdminComponent)},
       // more child routes
     ],
     canActivate: [authGuard],

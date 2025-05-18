@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/category")
@@ -17,6 +18,10 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestParam String name) {
+        Optional<Category> categoryOptional = categoryRepository.findByNameIgnoreCase(name);
+        if(categoryOptional.isPresent()) {
+            return  ResponseEntity.badRequest().body("Category name already exist.");
+        }
         Category category = new Category();
         category.setName(name);
         categoryRepository.save(category);

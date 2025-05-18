@@ -26,5 +26,9 @@ export class CategoryService {
         return this._categories;
     }
 
+    addCategory(name: string) {
+        return this._categoryApiService.addCategory(name);
+    }
+
 
 }

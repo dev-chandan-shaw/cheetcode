@@ -13,4 +13,8 @@ export class CategoryApiService {
     getCategories() {
         return this._http.get<Category[]>(`${this._baseUrl}/category`);
     }
+
+    addCategory(name: string) {
+        return this._http.post(`${this._baseUrl}/category?name=${name}`, { });
+    }
 }

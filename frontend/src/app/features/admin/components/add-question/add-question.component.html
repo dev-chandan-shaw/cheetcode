@@ -1,3 +1,5 @@
+
+<form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
 <div
   class="p-fluid"
   style="
@@ -10,14 +12,7 @@
 >
   <!-- Category Dropdown -->
   <div class="p-field" style="width: 100%">
-    <p-dropdown
-      [options]="categories"
-      [(ngModel)]="selectedCategory"
-      placeholder="Select a category"
-      inputId="category"
-      [autoDisplayFirst]="false"
-      styleClass="w-full"
-    ></p-dropdown>
+    <p-select  [options]="categories()" optionValue="id" formControlName="categoryId" optionLabel="name" placeholder="Select a category" class="w-full" />
   </div>
 
   <!-- Question Title -->
@@ -26,9 +21,9 @@
       <input
         pInputText
         id="questionTitle"
-        [(ngModel)]="questionTitle"
         autocomplete="off"
         style="width: 100%"
+        formControlName="title"
       />
       <label for="questionTitle">Question Title</label>
     </p-floatlabel>
@@ -40,7 +35,7 @@
       <input
         pInputText
         id="questionLink"
-        [(ngModel)]="questionLink"
+        formControlName="link"
         autocomplete="off"
         style="width: 100%"
       />
@@ -54,8 +49,11 @@
       rounded="true"
       size="small"
       variant="text"
-      severity="warn"
+      severity="danger"
+      (onClick)="onCancel()"
     />
     <p-button label="Save" rounded="true" size="small" type="submit" />
   </div>
+    
 </div>
+</form>

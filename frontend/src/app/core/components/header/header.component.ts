@@ -14,7 +14,7 @@ export class HeaderComponent {
   private readonly _authService = inject(AuthService);
   user = this._authService.getUser();
   items: MenuItem[] = [
-    { label: this.user()?.firstName + ' ' + this.user()?.lastName, icon: 'pi pi-user' },
+    { label: this.user()?.firstName + ' ' + this.user()?.lastName, icon: 'pi pi-user', disabled: true },
     { label: 'Sign Out', command: () => this._authService.logout(), icon: 'pi pi-sign-out' }];
 
 }

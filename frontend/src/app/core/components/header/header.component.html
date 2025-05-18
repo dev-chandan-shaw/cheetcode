@@ -1,15 +1,14 @@
 <header class="bg-zinc-900 border-b border-b-zinc-600 box-border">
-    <div class="flex justify-between items-center w-[min(100%,800px)] m-auto">
+    <div class="flex justify-between items-center w-[min(100%,800px)] pe-4 m-auto">
         <div class="flex  items-center  box-border">
             <a [routerLink]="['/practice']" class="p-4 border-b-2 border-transparent"
                 routerLinkActive="active">Practice</a>
             <a [routerLink]="['/revision']" class="p-4 border-b-2 border-transparent"
                 routerLinkActive="active">Revision</a>
         </div>
-        <div (click)="menu.toggle($event)" class="flex cursor-pointer items-center hover:border box-border border-zinc-500 rounded-lg px-4 py-2 gap-2 ">
-            <img src="assets/images/user_logo.jpg" class="h-8 w-8 rounded-full object-cover" alt="user logo">
-        </div>
-        
+        <img (click)="menu.toggle($event)" src="assets/images/user_logo.jpg" class="h-8 w-8  hover:outline outline-offset-2 cursor-pointer  rounded-full object-cover"
+            alt="user logo">
+
     </div>
     <p-menu #menu [model]="items" [popup]="true" />
 </header>
