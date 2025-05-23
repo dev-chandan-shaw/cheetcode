@@ -4,3 +4,9 @@ export interface Question {
   link: string;
   isBookmarked: boolean;
 }
+
+export interface IQuestionNote {
+  id: number;
+  question: Question;
+  note: string;
+}

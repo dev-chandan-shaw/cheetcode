@@ -1,4 +1,11 @@
-import { Component, inject, input, linkedSignal, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  linkedSignal,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { QuestionCardComponent } from '../../shared/components/question-card/question-card.component';
 import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Category } from '../../shared/models/category';
@@ -15,6 +22,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { SavedQuestionService } from '../../shared/services/saved-question.service';
 import { ImportantQuestionService } from '../../shared/services/startedQuestion.service';
 import { Router } from '@angular/router';
+import { QuestionNoteService } from '../../shared/services/question-note.service';
 
 @Component({
   selector: 'app-practice',
@@ -28,17 +36,21 @@ import { Router } from '@angular/router';
     ChipModule,
     ButtonModule,
     CommonModule,
-    ProgressBarModule
+    ProgressBarModule,
   ],
+  providers: [QuestionNoteService],
   templateUrl: './practice.component.html',
   styleUrl: './practice.component.scss',
 })
 export class PracticeComponent implements OnInit {
+  private readonly _questionNoteService = inject(QuestionNoteService);
   private readonly _categoryService = inject(CategoryService);
   private readonly _savedQuestionService = inject(SavedQuestionService);
   private readonly _importantQuestionService = inject(ImportantQuestionService);
   private readonly _router = inject(Router);
   categories = this._categoryService.getCategories();
+
+  questionNoteMap = new Map<number, string>();
 
   filteredCategories: Category[] = [];
 
@@ -54,6 +66,12 @@ export class PracticeComponent implements OnInit {
     this._categoryService.fetchCategories();
     this._savedQuestionService.fetchQuestions();
     this._importantQuestionService.fetchQuestions();
+    this._questionNoteService.getAllNotes().subscribe((notes) => {
+      notes.forEach((note) => {
+        this.questionNoteMap.set(note.question.id, note.note);
+        console.log(this.questionNoteMap);
+      });
+    });
   }
 
   serchQuestion() {
@@ -82,7 +100,9 @@ export class PracticeComponent implements OnInit {
   }
 
   pickRandomQuestion() {
-    const randomIndex = Math.floor(Math.random() * this.selectedCategory().questions.length);
+    const randomIndex = Math.floor(
+      Math.random() * this.selectedCategory().questions.length
+    );
     const question = this.selectedCategory().questions[randomIndex];
     if (question.link) {
       window.open(question.link, '_blank');
@@ -93,5 +113,9 @@ export class PracticeComponent implements OnInit {
     this.filteredCategories = this.categories().filter((category) => {
       return category.name.toLowerCase().includes(event.query.toLowerCase());
     });
+  }
+
+  getQuestionNote(question: Question) {
+    return this.questionNoteMap.get(question.id) || '';
   }
 }

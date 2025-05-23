@@ -11,6 +11,12 @@
   </a>
   <div class="flex items-center justify-center gap-4">
     <p-button
+      icon="pi pi-pencil"
+      [rounded]="true"
+      variant="text"
+      (click)="openNotesDialog()"
+    />
+    <p-button
       [icon]="isMarkedForRevision() ? 'pi pi-star-fill' : 'pi pi-star'"
       [rounded]="true"
       (onClick)="toggleRevision()"

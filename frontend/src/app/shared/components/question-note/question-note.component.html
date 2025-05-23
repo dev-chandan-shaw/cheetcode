@@ -1,0 +1,11 @@
+<textarea
+  pTextarea
+  id="over_label"
+  [(ngModel)]="note"
+  rows="10"
+  style="resize: none; width: 100%"
+  class="h-full"
+></textarea>
+<div class="flex justify-end">
+  <p-button (onClick)="saveNote()">Save</p-button>
+</div>
