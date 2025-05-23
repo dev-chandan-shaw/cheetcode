@@ -41,7 +41,6 @@
   <section class="mt-4">
     <ng-container *ngFor="let question of filteredQuestions(); let i = index">
       <app-question-card
-        [note]="getQuestionNote(question)"
         [question]="question"
         [index]="i"
       />

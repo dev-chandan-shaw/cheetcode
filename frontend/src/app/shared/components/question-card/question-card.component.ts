@@ -25,7 +25,6 @@ import { QuestionNoteComponent } from '../question-note/question-note.component'
 export class QuestionCardComponent {
   question = input.required<Question>();
   index = input.required<number>();
-  note = input<string>('');
   isHovered = false;
   private readonly _importantQuestionService = inject(ImportantQuestionService);
   private readonly _savedQuestionService = inject(SavedQuestionService);
@@ -39,12 +38,6 @@ export class QuestionCardComponent {
   isBookmarked: Signal<boolean> = linkedSignal(() =>
     this.savedQuestions().has(this.question().id)
   );
-
-  constructor() {
-    effect(() =>
-      console.log(this.isMarkedForRevision(), 'isMarkedForRevision')
-    );
-  }
 
   toggleBookmark() {
     if (!this.isBookmarked())
@@ -66,8 +59,7 @@ export class QuestionCardComponent {
         modal: true,
         width: 'min(90vw, 600px)',
         data: {
-          questionId: this.question().id,
-          note: this.note(),
+          questionId: this.question().id
         },
       }
     );

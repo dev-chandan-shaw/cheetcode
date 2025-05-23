@@ -45,7 +45,6 @@ export class SigninComponent {
   }
   onSubmit() {
     if (this.signinForm.valid) {
-      console.log(this.signinForm.value);
       const { email, password } = this.signinForm.value;
       this._authService.login(email, password).subscribe({
         next: () => {

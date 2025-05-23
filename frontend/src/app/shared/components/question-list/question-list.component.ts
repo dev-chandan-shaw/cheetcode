@@ -115,7 +115,6 @@ export class QuestionListComponent {
 
   selectCategory(category: Category) {
     this.selectedCategory = category;
-    console.log('Category selected:', category);
   }
 
   getSelectedCategoryBgColor(category: Category) {

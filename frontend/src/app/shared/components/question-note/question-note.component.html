@@ -7,5 +7,5 @@
   class="h-full"
 ></textarea>
 <div class="flex justify-end">
-  <p-button (onClick)="saveNote()">Save</p-button>
+  <p-button label="Save" type="submit" [disabled]="isLoading" [icon]="isLoading ? 'pi pi-spin pi-spinner' : ''" (onClick)="saveNote()"></p-button>
 </div>

@@ -29,7 +29,6 @@ export class ImportantQuestionService {
     const updatedSet = new Set(this.questionSet());
     updatedSet.add(question.id);
     this.questionSet.set(updatedSet); // Replace the signal value
-    console.log(this.questionSet(), 'question set');
     this._http.post(`${this.baseUrl}/important-question?questionId=${question.id}`, {}).subscribe();
   }
 

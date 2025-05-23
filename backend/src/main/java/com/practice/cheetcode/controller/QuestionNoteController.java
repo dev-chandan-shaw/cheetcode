@@ -64,8 +64,13 @@ public class QuestionNoteController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getAllQuestionNote() {
-        return ResponseEntity.ok(questionNoteRepository.findAll());
+    public ResponseEntity<?> getAllQuestionNote(Principal principal) {
+        Optional<User> userOptional = userRepository.findByEmail(principal.getName());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not exist");
+        }
+        User user = userOptional.get();
+        return ResponseEntity.ok(questionNoteRepository.findByUser(user));
     }
 
 }

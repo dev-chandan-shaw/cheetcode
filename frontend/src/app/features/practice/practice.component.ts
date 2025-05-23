@@ -38,7 +38,6 @@ import { QuestionNoteService } from '../../shared/services/question-note.service
     CommonModule,
     ProgressBarModule,
   ],
-  providers: [QuestionNoteService],
   templateUrl: './practice.component.html',
   styleUrl: './practice.component.scss',
 })
@@ -67,10 +66,7 @@ export class PracticeComponent implements OnInit {
     this._savedQuestionService.fetchQuestions();
     this._importantQuestionService.fetchQuestions();
     this._questionNoteService.getAllNotes().subscribe((notes) => {
-      notes.forEach((note) => {
-        this.questionNoteMap.set(note.question.id, note.note);
-        console.log(this.questionNoteMap);
-      });
+      this._questionNoteService.setQuestionNoteMap(notes);
     });
   }
 

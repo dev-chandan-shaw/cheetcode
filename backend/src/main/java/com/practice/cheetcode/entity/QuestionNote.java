@@ -1,5 +1,4 @@
 package com.practice.cheetcode.entity;
-
 import jakarta.persistence.*;
 import lombok.Data;
 
