@@ -6,7 +6,7 @@
             <a [routerLink]="['/revision']" class="p-4 border-b-2 border-transparent"
                 routerLinkActive="active">Revision</a>
         </div>
-        <img (click)="menu.toggle($event)" src="assets/images/user_logo.jpg" class="h-8 w-8  hover:outline outline-offset-2 cursor-pointer  rounded-full object-cover"
+        <img (click)="menu.toggle($event)" [src]="profilePicture() ?? 'assets/images/user_logo.jpg'" class="h-8 w-8  hover:outline outline-offset-2 cursor-pointer  rounded-full object-cover"
             alt="user logo">
 
     </div>

@@ -3,6 +3,8 @@ package com.practice.cheetcode.config;
 import com.practice.cheetcode.security.JWTAuthFilter;
 import com.practice.cheetcode.service.CustomUserDetailsService;
 import com.practice.cheetcode.service.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Bean
     public JWTAuthFilter jwtAuthFilter(CustomUserDetailsService userDetailsService, JWTService jwtService) {
@@ -50,8 +58,15 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
                 )
+                .oauth2Login(oauth2 -> {
+                    oauth2.successHandler(oAuth2SuccessHandler)
+                            .failureHandler((request, response, exception) -> {
+                                response.sendRedirect(frontendUrl+"signin?error=true");
+                            });
+                })
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

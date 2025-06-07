@@ -38,6 +38,13 @@ export const routes: Routes = [
         (m) => m.SignupComponent
       ),
   },
+  // {
+  //   path: 'oauth2-redirect',
+  //   loadComponent: () =>
+  //     import('./core/auth/components/oauth2-redirect/oauth2-redirect.component').then(
+  //       (m) => m.Oauth2RedirectComponent
+  //   )
+  // },
   {
     path: '**',
     redirectTo: 'home',

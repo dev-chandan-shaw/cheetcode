@@ -3,6 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import environment from "../../../environment";
 import { CreateUser } from "../models/createUser";
 import { User } from "../models/user";
+import { Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -17,5 +18,9 @@ export class AuthApiService {
 
     signup(data : CreateUser) {
         return this._http.post<User>(`${this.baseUrl}/auth/signup`, data);
+    }
+
+    getCurrentUser(token : string) : Observable<User> {
+        return this._http.get<User>(`${this.baseUrl}/auth/me?token=${token}`);
     }
 }

@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthService } from '../../services/auth.service';
-import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ToastModule } from 'primeng/toast';
+import { BaseAuthComponent } from '../base-auth/base-auth.component';
 
 @Component({
   selector: 'app-signup',
@@ -29,15 +29,12 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   ],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
-  providers: [MessageService],
 })
-export class SignupComponent {
+export class SignupComponent extends BaseAuthComponent {
   signupForm: FormGroup;
-  private _authService = inject(AuthService);
-  private _router = inject(Router);
-  isLoading = this._authService.isLoading;
 
-  constructor(private fb: FormBuilder, private messageService: MessageService) {
+  constructor(private fb: FormBuilder) {
+    super();
     this.signupForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -45,26 +42,19 @@ export class SignupComponent {
       password: ['', Validators.required],
     });
   }
-
+  
   onSubmit() {
     if (this.signupForm.valid) {
+      this.isLoading.set(true);
+      
       this._authService.signup(this.signupForm.value).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'User created successfully',
-          });
+        next: (res) => {
+          this._authService.setUser(res);
+          this.handleSuccess('Signup successfully!');
           this._router.navigate(['/']);
         },
-        error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: err.error ?? err.error.message,
-          });
-        },
-      })
+        error: (err) => this.handleError(err)
+      });
     }
   }
 }

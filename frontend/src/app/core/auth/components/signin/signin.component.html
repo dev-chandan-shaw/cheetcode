@@ -1,4 +1,4 @@
-<main class="flex flex-col md:flex-row justify-center items-center w-full h-dvh">
+<main class="flex flex-col md:flex-row justify-center items-center w-full min-h-dvh py-4">
   <p-toast></p-toast>
   <img src="assets/images/signin.svg" alt="" class="h-96 w-full md:flex-1" />
   <div class="w-full flex-1">
@@ -31,7 +31,7 @@
           <input pInputText id="password" type="password" formControlName="password" style="width: 100%" />
           <label for="password">Password</label>
         </p-floatlabel>
-        <p class="h-8">
+        <p class="h-5">
           <small *ngIf="
               signinForm.get('password')?.invalid &&
               signinForm.get('password')?.touched
@@ -40,16 +40,26 @@
           </small>
         </p>
       </div>
+     
+       <p class="text-center mb-2">or continue with</p>
+      <button
+       (click)="signinWithGoogle()"
+       type="button"
+        class="w-full my-4 bg-[var(--p-code-background)]  p-2 text-lg border rounded-md flex items-center justify-center gap-4">
+        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt=""  height="30" width="30" />
+        Login with Google
+      </button>
+
       <p class="text-sm text-right">
         Don't have an account?
         <span>
-          <a routerLink="/signup" class="text-bold text-lg cursor-pointer">Signup</a>
+          <a routerLink="/signup" class="text-bold text-lg cursor-pointer text-[var(--p-primary-400)]">Signup</a>
         </span>
       </p>
       <p-button label="Signin" size="small" type="submit" styleClass="w-full mt-2" [disabled]="signinForm.invalid" />
     </form>
   </div>
-  <div *ngIf="isLoading() " class="h-dvh w-full flex items-center justify-center backdrop-brightness-50  fixed">
-  <p-progress-spinner ariaLabel="loading" />
+  <div *ngIf="isLoading()" class="h-dvh w-full flex items-center justify-center backdrop-brightness-50  fixed">
+    <p-progress-spinner ariaLabel="loading" />
   </div>
 </main>

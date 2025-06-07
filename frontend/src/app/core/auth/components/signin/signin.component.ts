@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -14,6 +14,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { AuthService } from '../../services/auth.service';
+import environment from '../../../../environment';
+import { BaseAuthComponent } from '../base-auth/base-auth.component';
 
 @Component({
   selector: 'app-signin',
@@ -29,33 +31,48 @@ import { AuthService } from '../../services/auth.service';
   ],
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.scss',
-  providers: [MessageService],
 })
-export class SigninComponent {
+export class SigninComponent extends BaseAuthComponent implements OnInit {
   signinForm: FormGroup;
-  private readonly _authService = inject(AuthService);
-  private readonly _router = inject(Router);
-  isLoading = this._authService.isLoading;
 
-  constructor(private fb: FormBuilder, private messageService: MessageService) {
+  constructor(private fb: FormBuilder) {
+    super();
     this.signinForm = this.fb.group({
       email: ['', Validators.compose([Validators.required, Validators.email])],
       password: ['', Validators.required],
     });
   }
-  onSubmit() {
+
+  ngOnInit(): void {
+    this.signinWithGoogleSuccess();
+    this.signinWithGoogleFailure();
+  }
+
+   onSubmit() {
     if (this.signinForm.valid) {
       const { email, password } = this.signinForm.value;
+      this.isLoading.set(true);
+      
       this._authService.login(email, password).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'User logged in successfully', life: 3000 });
+        next: (res) => {
+          this._authService.setUser(res);
+          this.handleSuccess('Logged in successfully');
           this._router.navigate(['/']);
         },
-        error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error ?? err.error.message, life: 3000 });
-        }
+        error: (err) => this.handleError(err)
       });
+    }
+  }
 
+  signinWithGoogleFailure() {
+    const hasError = this._route.snapshot.queryParamMap.get('error');
+    if (hasError) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'Authorization failed! Please try again', 
+        life: 3000 
+      });
     }
   }
 }

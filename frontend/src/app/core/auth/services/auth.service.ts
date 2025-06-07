@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { AuthApiService } from "./auth.api.service";
-import { User } from "../models/user";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Observable } from "rxjs";
 import { CreateUser } from "../models/createUser";
-import { Router } from "@angular/router";
-import { Observable, tap, catchError, throwError } from "rxjs";
+import { User } from "../models/user";
+import { AuthApiService } from "./auth.api.service";
 
 @Injectable({
     providedIn: "root",
@@ -12,6 +12,7 @@ export class AuthService {
     private readonly _authApiService = inject(AuthApiService);
     private user = signal<User | null>(null);
     private readonly _router = inject(Router);
+    private readonly _route = inject(ActivatedRoute);
     isLoading = signal<boolean>(false);
 
     constructor() {
@@ -23,23 +24,18 @@ export class AuthService {
     // auth.service.ts
     login(email: string, password: string): Observable<User> {
         this.isLoading.set(true);
-        return this._authApiService.login(email, password).pipe(
-            tap((res: User) => {
-                this.isLoading.set(false);
-                this.user.set(res);
-                localStorage.setItem('user', JSON.stringify(res));
-            }),
-            catchError((err) => {
-                this.isLoading.set(false);
-                return throwError(() => err);
-            })
-        );
+        return this._authApiService.login(email, password);
     }
-
 
 
     getUser() {
         return this.user;
+    }
+
+    setUser(user: User) {
+        this.user.set(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", user.token);
     }
 
     isLoggedIn() {
@@ -59,18 +55,11 @@ export class AuthService {
 
     signup(data: CreateUser) {
         this.isLoading.set(true);
-        return this._authApiService.signup(data).pipe(
-            tap((res: User) => {
-                this.isLoading.set(false);
-                this.user.set(res);
-                localStorage.setItem('user', JSON.stringify(res));
-                this._router.navigate(['/']);
-            }),
-            catchError((err) => {
-                this.isLoading.set(false);
-                this.isLoading.set(false);
-                return throwError(() => err);
-            })
-        )
+        return this._authApiService.signup(data);
     }
+
+    fetchCurrentUser(token : string) : Observable<User> {
+        return this._authApiService.getCurrentUser(token);
+    }
+
 }

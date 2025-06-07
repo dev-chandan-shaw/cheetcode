@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
@@ -74,5 +75,18 @@ public class UserController {
     @GetMapping("/ping")
     public ResponseEntity<?> ping() {
         return ResponseEntity.ok(new Date());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentLoggedInUser(@RequestParam String token) {
+        String username = jwtService.extractUsername(token);
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User Not found"));
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setFirstName(user.getFirstName());
+        loginResponse.setLastName(user.getLastName());
+        loginResponse.setToken(token);
+        loginResponse.setEmail(user.getEmail());
+        loginResponse.setProfilePictureUrl(user.getProfilePictureUrl());
+        return ResponseEntity.ok(loginResponse);
     }
 }

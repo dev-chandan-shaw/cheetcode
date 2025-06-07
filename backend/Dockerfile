@@ -30,3 +30,14 @@ EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+ env_file:
+      - .envversion: '3.8'
+
+            services:
+              spring-app:
+                build: .
+                ports:
+                  - "8080:8080"
+                env_file:
+                  - .env
