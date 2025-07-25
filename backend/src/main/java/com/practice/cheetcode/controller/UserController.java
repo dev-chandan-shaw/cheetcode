@@ -52,10 +52,10 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody CreateUser request) {
+    public ApiResponse<?> signUp(@RequestBody CreateUser request) {
         var existedUser = userRepository.findByEmail(request.getEmail().toLowerCase(Locale.ROOT));
         if (existedUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already registered");
+            throw new BadRequestException("User already exists!");
         }
         var user = customUserDetailsService.createUser(request);
         String token = jwtService.generateToken(user.getEmail());
@@ -64,7 +64,7 @@ public class UserController {
         loginResponse.setLastName(user.getLastName());
         loginResponse.setToken(token);
         loginResponse.setEmail(user.getEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
+        return ApiResponse.success(loginResponse, "User created successfully", HttpStatus.CREATED);
     }
 
     @GetMapping("/ping")
@@ -72,16 +72,16 @@ public class UserController {
         return ResponseEntity.ok(new Date());
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<?> getCurrentLoggedInUser(@RequestParam String token) {
+    @GetMapping("/user")
+    public ApiResponse<?> getCurrentLoggedInUser(@RequestParam String token) {
         String username = jwtService.extractUsername(token);
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User Not found"));
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new BadRequestException("User Not found"));
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setFirstName(user.getFirstName());
         loginResponse.setLastName(user.getLastName());
         loginResponse.setToken(token);
         loginResponse.setEmail(user.getEmail());
         loginResponse.setProfilePictureUrl(user.getProfilePictureUrl());
-        return ResponseEntity.ok(loginResponse);
+        return ApiResponse.success(loginResponse, "User found", HttpStatus.OK);
     }
 }

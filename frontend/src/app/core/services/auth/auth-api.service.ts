@@ -17,11 +17,7 @@ export class AuthApiService {
   }
 
   fetchCurrentUser(token: string) {
-    return this._http.get<IApiResponse<IUser>>(`${this._apiUrl}/auth/user`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    return this._http.get<IApiResponse<IUser>>(`${this._apiUrl}/auth/user?token=${token}`);
   }
 
 }
