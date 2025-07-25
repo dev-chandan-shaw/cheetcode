@@ -24,7 +24,7 @@ export class Sheet implements OnInit {
     private _sharedSheetService = inject(SharedSheetApiService);
     private _messageService = inject(NzMessageService);
     copyToClipboard = (text: string) => {
-        const link = `${environment.apiUrl}/shared-sheet/${text}`; // Adjust the URL as needed
+        const link = `${environment.sharedSheetUrl}/${text}`; // Adjust the URL as needed
         navigator.clipboard.writeText(link).then(() => {
             this._messageService.success('Link copied to clipboard!');
         });

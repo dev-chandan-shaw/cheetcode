@@ -85,6 +85,10 @@ export class QuestionCard {
     return !!status?.note;
   });
 
+  openQuestionLink() {
+    window.open(this.question().link, '_blank');
+  }
+
   closeDropdown(): void {
     this.isMobilelDropdownOpen.set(false);
     this.isDesktopDropdownOpen.set(false);
