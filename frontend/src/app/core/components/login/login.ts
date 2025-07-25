@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 // Import NG-ZORRO Modules
@@ -18,7 +18,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
-export class Login {
+export class Login implements OnInit {
   loginForm: FormGroup;
   passwordVisible = signal(false);
   private _fb = inject(FormBuilder);
@@ -33,6 +33,14 @@ export class Login {
     });
   }
 
+  ngOnInit(): void {
+    this._route.queryParams.subscribe(params => {
+      if (params['token']) {
+        this.signinWithGoogleSuccess();
+      }
+    });
+  }
+
   togglePasswordVisibility(): void {
     this.passwordVisible.set(!this.passwordVisible());
   }
@@ -43,6 +51,7 @@ export class Login {
 
   signinWithGoogleSuccess() {
     const token = this._route.snapshot.queryParamMap.get('token');
+
     if (token) {
       localStorage.setItem('authToken', token);
       this._authService.fetchCurrentUser(token).subscribe({
