@@ -1,5 +1,6 @@
 package com.practice.cheetcode.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
+    @JsonIgnore
     private String password;
     private String profilePictureUrl;
     private List<String> roles = new ArrayList<>();

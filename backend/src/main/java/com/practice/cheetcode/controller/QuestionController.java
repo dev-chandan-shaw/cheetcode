@@ -1,16 +1,19 @@
 package com.practice.cheetcode.controller;
-
+import com.practice.cheetcode.dto.ApiResponse;
 import com.practice.cheetcode.dto.CreateQuestion;
+import com.practice.cheetcode.dto.PageResponse;
 import com.practice.cheetcode.entity.Category;
 import com.practice.cheetcode.entity.Question;
 import com.practice.cheetcode.repository.CategoryRepository;
 import com.practice.cheetcode.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,14 +37,28 @@ public class QuestionController {
         question.setLink(req.getLink());
         question.setTitle(req.getTitle());
         question.setCategory(category);
+        question.setDifficulty(req.getDifficulty());
         category.getQuestions().add(question);
         categoryRepository.save(category);
         return ResponseEntity.ok(question);
     }
 
-    @GetMapping("/category/{categoryId}")
-    public List<Question> getQuestionByCategoryId(@PathVariable long categoryId) {
-        return questionRepository.findByCategoryId(categoryId);
+    @GetMapping
+    public ApiResponse<?> getQuestionsByCategoryId(@RequestParam(required = false) Long categoryId, @PageableDefault(size = 20) Pageable pageable) {
+        Page<Question> page;
+        if (categoryId == null) {
+            page = questionRepository.findAll(pageable);
+        } else {
+            page = questionRepository.findByCategoryId(categoryId, pageable);
+        }
+        PageResponse<Question> pageResponse = new PageResponse<>(
+                page.getContent(),
+                page.getPageable().getPageNumber(),
+                page.getPageable().getPageSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                !page.isLast()
+        );
+        return ApiResponse.success(pageResponse, "Request success", HttpStatus.OK);
     }
-    
 }

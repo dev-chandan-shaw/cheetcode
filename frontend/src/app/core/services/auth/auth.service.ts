@@ -8,8 +8,18 @@ import { IUser } from "../../../shared/models/user";
 })
 export class AuthService {
     private _authApiService = inject(AuthApiService);
+
+    setUser(user: IUser): void {
+        localStorage.setItem('user', JSON.stringify(user));
+    }
     login(username: string, password: string) : Observable<IUser> {
         return this._authApiService.login(username, password).pipe(
+            map(response => response.data)
+        );
+    }
+
+    fetchCurrentUser(token: string) : Observable<IUser> {
+        return this._authApiService.fetchCurrentUser(token).pipe(
             map(response => response.data)
         );
     }

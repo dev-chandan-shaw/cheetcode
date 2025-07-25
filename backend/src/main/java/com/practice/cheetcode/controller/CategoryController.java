@@ -1,8 +1,10 @@
 package com.practice.cheetcode.controller;
 
+import com.practice.cheetcode.dto.ApiResponse;
 import com.practice.cheetcode.entity.Category;
 import com.practice.cheetcode.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +31,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<Category> getAllCategory() {
-        return categoryRepository.findAll();
+    public ApiResponse<?> getAllCategory() {
+        return ApiResponse.success(categoryRepository.findAll(), "Request success", HttpStatus.OK);
     }
 }

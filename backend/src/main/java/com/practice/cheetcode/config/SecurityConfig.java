@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -61,12 +62,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                .oauth2Login(oauth2 -> {
-                    oauth2.successHandler(oAuth2SuccessHandler)
-                            .failureHandler((request, response, exception) -> {
-                                response.sendRedirect(frontendUrl+"signin?error=true");
-                            });
-                })
+//                .oauth2Login(oauth2 -> {
+//                    oauth2.successHandler(oAuth2SuccessHandler)
+//                            .failureHandler((request, response, exception) -> {
+//                                response.sendRedirect(frontendUrl+"signin?error=true");
+//                            });
+//                })
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

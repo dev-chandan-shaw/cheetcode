@@ -1,5 +1,8 @@
 package com.practice.cheetcode.controller;
 
+import com.practice.cheetcode.Exception.BadRequestException;
+import com.practice.cheetcode.Exception.ResourceNotFoundException;
+import com.practice.cheetcode.dto.ApiResponse;
 import com.practice.cheetcode.dto.CreateUser;
 import com.practice.cheetcode.dto.LoginRequest;
 import com.practice.cheetcode.dto.LoginResponse;
@@ -7,18 +10,14 @@ import com.practice.cheetcode.entity.User;
 import com.practice.cheetcode.repository.UserRepository;
 import com.practice.cheetcode.service.CustomUserDetailsService;
 import com.practice.cheetcode.service.JWTService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/auth")
@@ -38,14 +37,10 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> getUser(@RequestBody LoginRequest req) {
-        Optional<User> userOptional = userRepository.findByEmail(req.getEmail());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is not registered");
-        }
-        User user = userOptional.get();
+    public ApiResponse<?> getUser(@RequestBody LoginRequest req) {
+        User user = userRepository.findByEmail(req.getEmail()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password");
+            throw new BadRequestException("Invalid credentials");
         }
         String token = jwtService.generateToken(user.getEmail());
         LoginResponse loginResponse = new LoginResponse();
@@ -53,7 +48,7 @@ public class UserController {
         loginResponse.setLastName(user.getLastName());
         loginResponse.setEmail(user.getEmail());
         loginResponse.setToken(token);
-        return ResponseEntity.ok(loginResponse);
+        return ApiResponse.success(loginResponse, "Logged in successfully", HttpStatus.OK);
     }
 
     @PostMapping("/signup")

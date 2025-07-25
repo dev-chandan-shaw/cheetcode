@@ -1,7 +1,6 @@
 package com.practice.cheetcode.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,6 +20,6 @@ public class Question {
     @JsonBackReference
     private Category category;
 
-    private QuestionDifficulty difficulty = QuestionDifficulty.EASY;
+    private QuestionDifficulty difficulty;
 
 }

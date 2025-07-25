@@ -1,18 +1,22 @@
 package com.practice.cheetcode.entity;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-public class QuestionNote {
+public class SheetQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    private String note;
+    @ManyToOne
+    @JsonIgnore
+    private Sheet sheet;
 
     @ManyToOne
     private Question question;
-    @ManyToOne
-    private User user;
+
 }
