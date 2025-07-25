@@ -1,0 +1,54 @@
+<div class="login-container">
+  <form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="submitForm()">
+    <div class="form-header">
+      <h2>Welcome Back!</h2>
+      <p>Please enter your credentials to log in.</p>
+    </div>
+
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Please enter a valid email address!">
+        <nz-input-group nzPrefixIcon="mail">
+          <input
+            type="email"
+            nz-input
+            formControlName="email"
+            placeholder="Email"
+            id="email"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Password must be at least 8 characters long!">
+        <nz-input-group nzPrefixIcon="lock" [nzSuffix]="suffixTemplate">
+          <input
+            [type]="passwordVisible() ? 'text' : 'password'"
+            nz-input
+            formControlName="password"
+            placeholder="Password"
+            id="password"
+          />
+        </nz-input-group>
+        <ng-template #suffixTemplate>
+          <i
+            nz-icon
+            [nzType]="passwordVisible() ? 'eye' : 'eye-invisible'"
+            (click)="togglePasswordVisibility()"
+          ></i>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <button
+        nz-button
+        class="login-form-button"
+        [nzType]="'primary'"
+        [disabled]="!loginForm.valid"
+      >
+        Log in
+      </button>
+    </nz-form-item>
+  </form>
+</div>

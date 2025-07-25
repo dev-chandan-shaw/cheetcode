@@ -1,0 +1,58 @@
+<div style="margin-inline: 1rem;">
+    <nz-tabs [nzTabBarExtraContent]="extraTemplate">
+        <nz-tab nzTitle="My Sheets">
+            <div style="max-height: calc(100dvh - 130px); overflow-y: auto;">
+                @if (!loading()) {
+                @for (sheet of sheets(); track $index) {
+                <nz-card style=" margin: 0 auto; margin-bottom: 1rem;" [nzTitle]="sheet.title"
+                    [nzExtra]="extraTemplate">
+                    <p>{{ sheet.title }}</p>
+                    <p>{{ sheet.slug }}</p>
+                </nz-card>
+                <ng-template #extraTemplate>
+                    <div style="width: 100%; display: flex; gap: 1rem;">
+                        <a (click)="copyToClipboard(sheet.slug)">Share</a>
+                        <a [routerLink]="['/sheet',sheet.id]">View</a>
+                    </div>
+                </ng-template>
+                } @empty {
+                <div style="display: flex; justify-content: center; margin: 2rem 0;">
+                    <p>No sheets available.</p>
+                </div>
+                }
+                }@else {
+                <div style="display: flex; justify-content: center; margin: 2rem 0;">
+                    <p>Loading sheets...</p>
+                </div>
+                }
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle="Shared Sheets">
+            @if (!loading()) {
+            @for (sheet of sharedSheets(); track $index) {
+            <nz-card style=" margin: 0 auto; margin-bottom: 1rem;" [nzTitle]="sheet.title" [nzExtra]="extraTemplate">
+                <p>{{ sheet.title }}</p>
+                <p>{{ sheet.slug }}</p>
+            </nz-card>
+            <ng-template #extraTemplate>
+                <div style="width: 100%; display: flex; gap: 1rem;">
+                    <a (click)="copyToClipboard(sheet.slug)">Share</a>
+                    <a [routerLink]="['/sheet',sheet.id]">View</a>
+                </div>
+            </ng-template>
+            } @empty {
+            <div style="display: flex; justify-content: center; ">
+                <p>No sheets available.</p>
+            </div>
+            }
+            }@else {
+            <div style="display: flex; justify-content: center; margin: 2rem 0;">
+                <p>Loading sheets...</p>
+            </div>
+            }
+        </nz-tab>
+    </nz-tabs>
+    <ng-template #extraTemplate>
+        <button nz-button nzType="primary" nzShape="round" (click)="openCreateSheetModal()" nz-button>Create</button>
+    </ng-template>
+</div>

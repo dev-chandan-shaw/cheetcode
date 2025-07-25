@@ -1,0 +1,57 @@
+<div style="background-color: white;">
+    <div class="questions-container">
+        <div nz-flex nzJustify="space-between" nzAlign="center"
+            style="padding: 1rem 2rem 0 2rem; flex-wrap: wrap; gap: 1rem;;">
+            <div nz-flex nzAlign="center" style="gap: 0.5rem;">
+                <h2 style="margin: 0;">{{ sheetName() }}</h2>
+                @if (isSharedSheet()) {
+                    <button nz-button nzType="primary" nzSize="small" nzShape="round" (click)="joinSharedSheet()">Join this sheet</button>
+                }
+            </div>
+            <div>
+                <nz-select class="custom-select" [(ngModel)]="selectedCategory"
+                    (ngModelChange)="onCategoryChange($event)" class="category-select">
+                    <nz-option nzValue="all" nzLabel="All Categories"></nz-option>
+                    @for (category of categories(); track category.id) {
+                    <nz-option [nzValue]="category.id" [nzLabel]="category.name"></nz-option>
+                    }
+                </nz-select>
+                <button nz-tooltip nzTooltipTitle="Pick a random question" nz-button nzType="primary" nzShape="circle"
+                    class="refresh-btn">
+                    <nz-icon nzType="retweet" nzTheme="outline" />
+                </button>
+            </div>
+        </div>
+
+
+        <div class="questions-content" style="height: calc(100dvh - 116px); overflow-y: auto;">
+            @if (initialLoading()) {
+            <div nz-flex nzJustify="center" nzAlign="center" style="height: 100%;">
+                <nz-spin nzSimple nzSize="large"></nz-spin>
+            </div>
+            } @else {
+            @for (data of listOfData(); track data.id; let i = $index) {
+            <app-question-card [mySheets]="mySheets()" [questionNumber]="i+1" [question]="data"></app-question-card>
+            } @empty {
+            <div nz-flex nzJustify="center" nzAlign="center" style="height: 100%;">
+
+                <nz-empty nzNotFoundImage="simple"></nz-empty>
+            </div>
+            }
+
+            @if (hasMore()) {
+            <div class="load-more-section">
+                <div class="loadmore">
+                    @if (!loadingMore()) {
+                    <button nz-button nzType="primary" (click)="onLoadMore()">load more</button>
+                    } @else {
+                    <button nzLoading nz-button nzType="primary">loading...</button>
+                    }
+                </div>
+            </div>
+            }
+            }
+        </div>
+    </div>
+
+</div>

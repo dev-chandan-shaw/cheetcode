@@ -1,52 +1,11 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
-import { LayoutComponent } from './core/components/layout/layout.component';
+import { Login } from './core/components/login/login';
 
 export const routes: Routes = [
+  { path: 'login', component: Login },
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'practice',
+    loadChildren: () => import('./modules/modules.routes').then(m => m.routes)
   },
-  {
-     path: '',
-    component: LayoutComponent,
-    children: [
-      { path: 'practice', loadComponent: () => import('./features/practice/practice.component').then((m) => m.PracticeComponent) },
-      { path: 'revision', loadComponent: () => import('./features/revision/revision.component').then((m) => m.RevisionComponent) },
-      {path: 'admin', loadComponent: () => import('./features/admin/admin.component').then((m) => m.AdminComponent)},
-      // more child routes
-    ],
-    canActivate: [authGuard],
-  },
-  {
-    path: 'admin',
-    loadComponent: () =>
-      import('./features/admin/admin.component').then((m) => m.AdminComponent),
-  },
-  {
-    path: 'signin',
-    loadComponent: () =>
-      import('./core/auth/components/signin/signin.component').then(
-        (m) => m.SigninComponent
-      ),
-  },
-  {
-    path: 'signup',
-    loadComponent: () =>
-      import('./core/auth/components/signup/signup.component').then(
-        (m) => m.SignupComponent
-      ),
-  },
-  // {
-  //   path: 'oauth2-redirect',
-  //   loadComponent: () =>
-  //     import('./core/auth/components/oauth2-redirect/oauth2-redirect.component').then(
-  //       (m) => m.Oauth2RedirectComponent
-  //   )
-  // },
-  {
-    path: '**',
-    redirectTo: 'home',
-  },
+  { path: '**', redirectTo: 'login' } // fallback route
 ];

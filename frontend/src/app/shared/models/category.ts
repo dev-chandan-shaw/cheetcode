@@ -1,7 +1,4 @@
-import { Question } from "./question";
-
-export interface Category {
-  id: number;
+export interface ICategory {
+  id: number | 'all';
   name: string;
-  questions: Question[];
 }

@@ -1,0 +1,37 @@
+/* src/app/login/login.component.css */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0f2f5; /* A light grey background */
+}
+
+.login-form {
+  max-width: 400px;
+  width: 100%;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-header p {
+  color: #888;
+}
+
+.login-form-button {
+  width: 100%;
+}

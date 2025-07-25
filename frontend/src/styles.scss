@@ -1,14 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import "primeicons/primeicons.css";
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-html,
-body {
-  margin: auto;
+// Import the official dark less style file
+// @import "ng-zorro-antd/ng-zorro-antd.dark.less";
+.ant-table-content {
+  box-shadow: none !important;
 }
-body {
+
+.ant-table-body {
+  box-shadow: none !important;
+}
+
+.ant-table-body::before,
+.ant-table-body::after {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+*{
   margin: 0;
-  font-family: "Inter", sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  background-color: rgb(242, 240, 240) !important; /* Light background for better contrast */
 }

@@ -1,0 +1,92 @@
+<nz-layout>
+
+    <nz-header style="background-color: white; padding-inline: 32px;">
+        <div nz-flex nzJustify="space-between" nzAlign="center" class="app-header">
+            <div nz-flex nzAlign="center" style="gap: 1.5rem;">
+                <i nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+                    (click)="sidebarToggle()"></i>
+
+                <h1 nz-typography style="margin: 0; cursor: pointer; font-weight: bold;">DSA<span style="color: red;">Drill</span>
+                </h1>
+            </div>
+
+            <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click"
+                style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
+                <img style="height: 2.5rem; width: 2.5rem; border-radius: 50%; object-fit: cover;"
+                    src="https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8="
+                    alt="Profile" />
+                <h3 style="margin: 0; font-weight: bold;" class="profile-name">
+                    {{ loggedInUser()?.firstName }}
+                </h3>
+                <i nz-iconnzType="down" class="profile-name"></i>
+            </div>
+        </div>
+    </nz-header>
+    <nz-divider style="margin: 0; padding: 0;"></nz-divider>
+
+    <nz-layout>
+
+
+        @if (isHandset$ | async) {
+        <nz-drawer [nzWidth]="'300px'" class="custom-drawer" [nzClosable]="false" [nzVisible]="isDrawerOpen"
+            [nzPlacement]="'left'" (nzOnClose)="closeDrawer()">
+            <ng-container *nzDrawerContent>
+                <div class="drawer-header" nz-flex nzJustify="space-between" nzAlign="center">
+                    <h1 style="margin: 0; cursor: pointer; font-weight: bold;">DSA<span style="color: red;">Drill</span>
+                    </h1>
+                    <nz-icon nzType="close" class="trigger" (click)="closeDrawer()"></nz-icon>
+                </div>
+                <nz-divider></nz-divider>
+                <ul nz-menu nzTheme="light" nzMode="inline">
+                    <li nz-menu-item routerLink="/home" routerLinkActive="ant-menu-item-selected"
+                        [routerLinkActiveOptions]="{ exact: true }">
+                        <i nz-icon nzType="home"></i>
+                        <span>Home</span>
+                    </li>
+                    <li nz-menu-item routerLink="/sheet" routerLinkActive="ant-menu-item-selected">
+                        <i nz-icon nzType="file"></i>
+                        <span>Sheets</span>
+                    </li>
+                </ul>
+            </ng-container>
+        </nz-drawer>
+        } @else {
+        <nz-sider class="main-sider" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null" nzTheme="light">
+            <ul nz-menu nzTheme="light" nzMode="inline">
+                <li nz-menu-item routerLink="/home" routerLinkActive="ant-menu-item-selected"
+                    [routerLinkActiveOptions]="{ exact: true }">
+                    <i nz-icon nzType="home"></i>
+                    <span>Home</span>
+                </li>
+                <li nz-menu-item routerLink="/sheet" routerLinkActive="ant-menu-item-selected">
+                    <i nz-icon nzType="file"></i>
+                    <span>Sheets</span>
+                </li>
+            </ul>
+        </nz-sider>
+        }
+
+        <nz-layout class="inner-layout">
+            <nz-content>
+                <div class="inner-content">
+                    <router-outlet></router-outlet>
+                </div>
+            </nz-content>
+        </nz-layout>
+
+    </nz-layout>
+</nz-layout>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu class="profile-menu-list">
+        <li nz-menu-item class="menu-header">
+            <strong>{{ loggedInUser()?.firstName }} {{ loggedInUser()?.lastName }}</strong>
+            <div class="email-text">{{ loggedInUser()?.email }}</div>
+        </li>
+        <li nz-menu-divider></li>
+        <li  nz-menu-item  nzIcon="logout" (click)="logout()" nzDanger>
+            <i nz-icon nzType="logout"></i>
+            Logout
+        </li>
+    </ul>
+</nz-dropdown-menu>
