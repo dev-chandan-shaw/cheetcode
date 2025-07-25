@@ -10,7 +10,7 @@ export class AuthService {
     private _authApiService = inject(AuthApiService);
 
     setUser(user: IUser): void {
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
     }
     login(username: string, password: string) : Observable<IUser> {
         return this._authApiService.login(username, password).pipe(
