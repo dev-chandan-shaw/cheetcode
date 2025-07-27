@@ -56,7 +56,6 @@ export class Login implements OnInit {
       localStorage.setItem('authToken', token);
       this._authService.fetchCurrentUser(token).subscribe({
         next: (res) => {
-          this._authService.setUser(res);
           this._router.navigate(['/']);
         },
         error: () => {

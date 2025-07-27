@@ -1,0 +1,59 @@
+<div class="form-container">
+
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+
+        <!-- Title Field -->
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="title" nzRequired>Title</nz-form-label>
+            <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="Please input the question title!">
+                <input nz-input formControlName="title" id="title" placeholder="e.g., Two Sum" />
+            </nz-form-control>
+        </nz-form-item>
+
+        <!-- Link Field -->
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="link" nzRequired>Link</nz-form-label>
+            <nz-form-control [nzSm]="16" [nzXs]="24" [nzErrorTip]="linkErrorTpl">
+                <input nz-input formControlName="link" id="link" placeholder="https://example.com/problems/two-sum" />
+                <ng-template #linkErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">Please input the URL!</ng-container>
+                    <ng-container *ngIf="control.hasError('pattern')">The input is not a valid URL!</ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+
+        <!-- Category Field -->
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" nzRequired>Category</nz-form-label>
+            <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="Please select a category!">
+                <nz-select formControlName="categoryId" id="category" nzPlaceHolder="Select a category">
+                    @for (category of categories(); track $index) {
+                    <nz-option [nzLabel]="category.name" [nzValue]="category.id"></nz-option>
+                    }
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+        <!-- Difficulty Field -->
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="difficulty" nzRequired>Difficulty</nz-form-label>
+            <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="Please select a difficulty level!">
+                <nz-select formControlName="difficulty" id="difficulty" nzPlaceHolder="Select a difficulty level">
+                    @for (difficulty of DIFFICULTIES; track $index) {
+                    <nz-option [nzLabel]="difficulty" [nzValue]="difficulty"></nz-option>
+                    }
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+        <!-- Submit Button -->
+        <nz-form-item>
+            <nz-form-control [nzSm]="16" [nzXs]="24" [nzOffset]="6">
+                <button nz-button [nzLoading]="isLoading()" nzType="primary" type="submit" [disabled]="validateForm.invalid"
+                    class="w-full">
+                    <nz-icon nzType="poweroff" />
+                    <span style="margin-left: 8px;">Add Question</span></button>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>

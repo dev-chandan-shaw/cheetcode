@@ -1,0 +1,52 @@
+<h2 style="padding-top: 16px;">Requested Questions</h2>
+
+@if(isLoading()) {
+<nz-card>
+
+    <div class="loading-spinner">
+
+        <nz-spin></nz-spin>
+
+    </div>
+</nz-card>
+} @else {
+
+@for (question of unapprovedQuestions(); track $index) {
+<nz-card class="question-card" [nzBordered]="true" style="margin-bottom: 16px;">
+    <div nz-row nzJustify="space-between" nzAlign="middle">
+        <!-- Left Section: Title + Difficulty -->
+        <div nz-col>
+            <div style="font-weight: normal; font-size: 16px;">{{ question.title }} ({{ question.category }}) </div>
+            <nz-tag [nzColor]="getColor(question.difficulty)" style="margin-top: 4px;">
+                {{ question.difficulty }}
+            </nz-tag>
+        </div>
+
+        <!-- Right Section: Actions -->
+        <div nz-col style="display: flex; align-items: center; gap: 16px;">
+            <!-- View Icon -->
+            <button nz-button nzType="link" nzShape="circle" nz-tooltip="View Question"
+                (click)="viewQuestion(question)">
+                <span nz-icon nzType="export"></span>
+            </button>
+
+            <!-- Approve Icon -->
+            <button nz-button nzType="primary" nz-popconfirm="Are you sure you want to approve this question?" nz-popconfirmTitle="Approve Question"  nzShape="circle" nz-tooltip="Approve"
+                (click)="approveQuestion(question)">
+                <span nz-icon nzType="check" nzTheme="outline"></span>
+            </button>
+
+            <!-- Archive Icon -->
+            <button nz-button nzType="default" nzShape="circle" nzDanger nz-tooltip="Archive"
+                (click)="archiveQuestion(question)">
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+            </button>
+        </div>
+    </div>
+</nz-card>
+} @empty {
+<nz-card>
+    <nz-empty nzDescription="No unapproved questions available."></nz-empty>
+</nz-card>
+}
+}

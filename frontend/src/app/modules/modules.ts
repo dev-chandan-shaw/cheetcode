@@ -13,6 +13,7 @@ import { map, Observable, shareReplay } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { AuthService } from '../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-modules',
@@ -28,7 +29,8 @@ export class Modules implements OnInit {
   isDrawerOpen = false;
   private breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private _router: Router = inject(Router);
-
+  private _authService = inject(AuthService);
+  isAdmin = this._authService.isAdmin();
 
   isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(

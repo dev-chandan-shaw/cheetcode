@@ -10,10 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -22,7 +19,10 @@ public class JWTService {
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
     public String generateToken(String userName, long userId, Collection<? extends GrantedAuthority> authorities) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", authorities.stream().findFirst().orElse(null));
+        List<String> roleNames = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+        claims.put("roles",roleNames);
         return createToken(claims, userName, userId);
     }
 
@@ -37,6 +37,7 @@ public class JWTService {
     private String createToken(Map<String, Object> claims, String userName, long userId) {
         claims.put("email", userName);
         claims.put("id", userId);
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userName)

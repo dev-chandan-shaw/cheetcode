@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    Page<Question> findByCategoryId(long categoryId, Pageable pageable);
+    Page<Question> findByCategoryIdAndApproved(long categoryId, Pageable pageable, boolean approved);
+    Page<Question> findByApproved(Pageable pageable, boolean approved);
+
+    Page<Question> findByApprovedAndArchived(Pageable pageable, boolean approved, boolean archived);
 }
 

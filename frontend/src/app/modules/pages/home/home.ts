@@ -16,7 +16,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { QuestionsList } from "../../../shared/components/questions-list/questions-list";
-import { QuestionService } from './services/question.service';
+import { QuestionService } from '../../../shared/services/question/question.service';
 
 @Component({
     selector: 'app-home',

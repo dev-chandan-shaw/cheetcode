@@ -6,19 +6,20 @@
                 <i nz-icon class="trigger" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
                     (click)="sidebarToggle()"></i>
 
-                <h1 nz-typography style="margin: 0; cursor: pointer; font-weight: bold;">DSA<span style="color: red;">Drill</span>
+                <h1 nz-typography style="margin: 0; cursor: pointer; font-weight: bold;">DSA<span
+                        style="color: red;">Drill</span>
                 </h1>
             </div>
 
             <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click"
                 style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
                 <img style="height: 2.5rem; width: 2.5rem; border-radius: 50%; object-fit: cover;"
-                    src="https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8="
+                    [src]="loggedInUser()?.profilePictureUrl || 'https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8='"
                     alt="Profile" />
-                <h3 style="margin: 0; font-weight: bold;" class="profile-name">
+                <h3 style="margin: 0; font-weight: bold; cursor: pointer;" class="profile-name">
                     {{ loggedInUser()?.firstName }}
                 </h3>
-                <i nz-iconnzType="down" class="profile-name"></i>
+                <i nz-icon nzType="down" class="profile-name"></i>
             </div>
         </div>
     </nz-header>
@@ -47,6 +48,12 @@
                         <i nz-icon nzType="file"></i>
                         <span>Sheets</span>
                     </li>
+                    @if (isAdmin()) {
+                    <li nz-menu-item routerLink="/admin" routerLinkActive="ant-menu-item-selected">
+                        <i nz-icon nzType="safety"></i>
+                        <span>Admin</span>
+                    </li>
+                    }
                 </ul>
             </ng-container>
         </nz-drawer>
@@ -62,6 +69,12 @@
                     <i nz-icon nzType="file"></i>
                     <span>Sheets</span>
                 </li>
+                @if (isAdmin()) {
+                <li nz-menu-item routerLink="/admin" routerLinkActive="ant-menu-item-selected">
+                    <i nz-icon nzType="safety"></i>
+                    <span>Admin</span>
+                </li>
+                }
             </ul>
         </nz-sider>
         }
@@ -84,7 +97,7 @@
             <div class="email-text">{{ loggedInUser()?.email }}</div>
         </li>
         <li nz-menu-divider></li>
-        <li  nz-menu-item  nzIcon="logout" (click)="logout()" nzDanger>
+        <li nz-menu-item nzIcon="logout" (click)="logout()" nzDanger>
             <i nz-icon nzType="logout"></i>
             Logout
         </li>

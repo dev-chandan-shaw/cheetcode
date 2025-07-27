@@ -2,11 +2,10 @@ package com.practice.cheetcode.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -21,5 +20,8 @@ public class User {
     @JsonIgnore
     private String password;
     private String profilePictureUrl;
-    private List<String> roles = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
+
 }

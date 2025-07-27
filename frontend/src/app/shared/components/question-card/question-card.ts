@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { IQuestionDataService } from '../../models/question-data';
 import { QuestionNote } from '../question-note/question-note';
-import { QuestionService } from '../../../modules/pages/home/services/question.service';
+import { QuestionService } from '../../services/question/question.service';
 import { CategoryService } from '../../services/category/cateogory.service';
 import { QuestionStatusService } from '../../services/question-status.service';
 import { IQuestion, QuestionDifficulty } from '../../models/interface';

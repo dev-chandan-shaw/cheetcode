@@ -9,12 +9,18 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { SharedSheetApiService } from '../../../shared/services/shared-sheet.api.service';
 import { environment } from '../../../../environments/environment';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { AddQuestion } from '../../../shared/components/add-question/add-question';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzSpinComponent, NzSpinModule } from "ng-zorro-antd/spin";
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
-  selector: 'app-sheet',
-  imports: [CommonModule, NzCardModule, NzButtonModule, RouterModule, RouterModule, NzTabsModule],
-  templateUrl: './sheet.html',
-  styleUrl: './sheet.scss'
+    selector: 'app-sheet',
+    imports: [CommonModule, NzCardModule, NzButtonModule, RouterModule, RouterModule, NzTabsModule, NzEmptyModule, NzSpinComponent, NzIconModule],
+    providers: [NzModalService],
+    templateUrl: './sheet.html',
+    styleUrl: './sheet.scss'
 })
 export class Sheet implements OnInit {
     sheets = signal<ISheet[]>([]);
@@ -23,6 +29,7 @@ export class Sheet implements OnInit {
     private _sheetService = inject(SheetService); // Assuming SheetApiService is injected for fetching sheets
     private _sharedSheetService = inject(SharedSheetApiService);
     private _messageService = inject(NzMessageService);
+    private _modalService = inject(NzModalService);
     copyToClipboard = (text: string) => {
         const link = `${environment.sharedSheetUrl}/${text}`; // Adjust the URL as needed
         navigator.clipboard.writeText(link).then(() => {
@@ -41,7 +48,7 @@ export class Sheet implements OnInit {
             next: (sheets) => {
                 this.sheets.set(sheets);
                 this.loading.set(false);
-              },
+            },
             error: () => {
                 this.sheets.set([]);
                 this.loading.set(false);
@@ -61,6 +68,16 @@ export class Sheet implements OnInit {
                 }
             });
         }
+    }
+
+    openCreateQuestionModal(sheetId: number): void {
+        this._modalService.create<AddQuestion>({
+            nzTitle: 'Add Question',
+            nzContent: AddQuestion,
+            nzData: { sheetId },
+            nzFooter: null,
+            nzWidth: '600px'
+        });
     }
 
     private _loadSharedSheets(): void {

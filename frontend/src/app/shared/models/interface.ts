@@ -5,6 +5,14 @@ export interface IQuestion {
     difficulty: QuestionDifficulty;
 }
 
+export interface IAddQuestionDto {
+    title: string;
+    link: string;
+    categoryId: number;
+    difficulty: QuestionDifficulty;
+    sheetId: number;
+}
+
 export interface IQuestionList {
     questions: IQuestion[];
     total: number;
@@ -25,4 +33,12 @@ export enum QuestionDifficulty {
 export interface ISheetQuestion {
     id: number;
     question: IQuestion;
+}
+
+export interface IUnapprovedQuestion {
+    id: number; 
+    title: string;
+    link: string;
+    difficulty: QuestionDifficulty;
+    category: string;
 }

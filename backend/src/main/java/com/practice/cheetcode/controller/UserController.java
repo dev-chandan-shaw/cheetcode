@@ -10,14 +10,24 @@ import com.practice.cheetcode.entity.User;
 import com.practice.cheetcode.repository.UserRepository;
 import com.practice.cheetcode.service.CustomUserDetailsService;
 import com.practice.cheetcode.service.JWTService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/auth")
@@ -36,18 +46,39 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping("/login")
-    public ApiResponse<?> getUser(@RequestBody LoginRequest req) {
-        User user = userRepository.findByEmail(req.getEmail()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            throw new BadRequestException("Invalid credentials");
-        }
-        String token = jwtService.generateToken(user.getEmail());
+    public ApiResponse<?> getUser(@RequestBody LoginRequest req, HttpServletResponse httpServletResponse) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
+        );
+
+        String username = authentication.getName();
+        User user = userRepository.findByEmail(username).get();
+
+        // Convert user roles to GrantedAuthority collection
+        Collection<? extends GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+
+        String token = jwtService.generateToken(username, user.getId(), authorities);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setFirstName(user.getFirstName());
         loginResponse.setLastName(user.getLastName());
         loginResponse.setEmail(user.getEmail());
         loginResponse.setToken(token);
+
+        Cookie jwtCookie = new Cookie("accessToken", token); // Cookie name can be anything
+
+        jwtCookie.setHttpOnly(true); // Prevents JavaScript access
+        jwtCookie.setSecure(true); // Should be true in production to send only over HTTPS
+        jwtCookie.setPath("/"); // The cookie is available to all paths
+        jwtCookie.setMaxAge(60 * 60 * 24); // Set cookie expiration (e.g., 24 hours in seconds)
+
+        // 2. Add the cookie to the response
+        httpServletResponse.addCookie(jwtCookie);
         return ApiResponse.success(loginResponse, "Logged in successfully", HttpStatus.OK);
     }
 
@@ -58,12 +89,18 @@ public class UserController {
             throw new BadRequestException("User already exists!");
         }
         var user = customUserDetailsService.createUser(request);
-        String token = jwtService.generateToken(user.getEmail());
+        Collection<? extends GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+
+        String token = jwtService.generateToken(user.getEmail(), user.getId(), authorities);
+
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setFirstName(user.getFirstName());
         loginResponse.setLastName(user.getLastName());
         loginResponse.setToken(token);
         loginResponse.setEmail(user.getEmail());
+
         return ApiResponse.success(loginResponse, "User created successfully", HttpStatus.CREATED);
     }
 
