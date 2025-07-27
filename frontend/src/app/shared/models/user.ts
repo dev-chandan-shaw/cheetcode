@@ -5,5 +5,12 @@ export interface IUser {
     lastName: string;
     token: string; // Optional token for authentication
     profilePictureUrl?: string; // Optional profile picture URL
+    lastVisitDate?: string; // Optional last visit date
+    streakCount?: number; // Optional daily streak count
     // Add other user properties as needed
+}
+
+export interface IStreakUpdateResponse {
+    user: IUser; // The updated user object
+    streakUpdated: boolean;
 }

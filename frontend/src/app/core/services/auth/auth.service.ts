@@ -54,7 +54,7 @@ export class AuthService {
         );
     }
 
-    private setUser(user: IUser): void {
+    setUser(user: IUser): void {
         const token = user.token;
         if (token) {
             const decodedToken: any = jwtDecode(token);

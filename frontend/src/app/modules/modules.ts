@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { IUser } from '../shared/models/user';
+import { IStreakUpdateResponse, IUser } from '../shared/models/user';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzDividerComponent } from "ng-zorro-antd/divider";
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -14,6 +14,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { AuthService } from '../core/services/auth/auth.service';
+import { VisitTrackingService } from '../shared/services/visit-tracking.service';
 
 @Component({
   selector: 'app-modules',
@@ -27,10 +28,13 @@ export class Modules implements OnInit {
   loggedInUser = signal<IUser | null>(null);
   isCollapsed = false;
   isDrawerOpen = false;
-  private breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
-  private _router: Router = inject(Router);
   private _authService = inject(AuthService);
   isAdmin = this._authService.isAdmin();
+  streakData = signal<IStreakUpdateResponse | null>(null);
+  
+  private breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private _router: Router = inject(Router);
+  private _streakTrackingService = inject(VisitTrackingService);
 
   isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -45,6 +49,7 @@ export class Modules implements OnInit {
     const isDrawerOpen = localStorage.getItem('isDrawerOpen');
     this.isCollapsed = isCollapsed ? JSON.parse(isCollapsed) : false;
     this.isDrawerOpen = isDrawerOpen ? JSON.parse(isDrawerOpen) : false;
+    this.loadStreak();
   }
 
   logout() {
@@ -68,6 +73,10 @@ export class Modules implements OnInit {
     localStorage.setItem('isDrawerOpen', JSON.stringify(this.isDrawerOpen));
   }
 
-
+  loadStreak() {
+    this._streakTrackingService.updateDailyStreak().subscribe(streak => {
+      this.streakData.set(streak);
+    });
+  }
 
 }

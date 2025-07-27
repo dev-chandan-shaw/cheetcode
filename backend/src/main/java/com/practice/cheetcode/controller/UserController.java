@@ -1,31 +1,28 @@
 package com.practice.cheetcode.controller;
 
 import com.practice.cheetcode.Exception.BadRequestException;
-import com.practice.cheetcode.Exception.ResourceNotFoundException;
-import com.practice.cheetcode.dto.ApiResponse;
-import com.practice.cheetcode.dto.CreateUser;
-import com.practice.cheetcode.dto.LoginRequest;
-import com.practice.cheetcode.dto.LoginResponse;
+import com.practice.cheetcode.dto.*;
 import com.practice.cheetcode.entity.User;
 import com.practice.cheetcode.repository.UserRepository;
 import com.practice.cheetcode.service.CustomUserDetailsService;
 import com.practice.cheetcode.service.JWTService;
+import com.practice.cheetcode.service.StreakService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -48,6 +45,9 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private StreakService streakService;
 
     @PostMapping("/login")
     public ApiResponse<?> getUser(@RequestBody LoginRequest req, HttpServletResponse httpServletResponse) {
@@ -121,4 +121,13 @@ public class UserController {
         loginResponse.setProfilePictureUrl(user.getProfilePictureUrl());
         return ApiResponse.success(loginResponse, "User found", HttpStatus.OK);
     }
+
+    @PostMapping("/streak/update")
+    public ApiResponse<StreakUpdateResponse> updateUserStreak() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        StreakUpdateResponse res = streakService.updateStreak(userEmail);
+        return ApiResponse.success(res, "Streak updated!", HttpStatus.OK);
+    }
+
 }
