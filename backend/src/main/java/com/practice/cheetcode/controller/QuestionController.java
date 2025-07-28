@@ -9,6 +9,7 @@ import com.practice.cheetcode.repository.CategoryRepository;
 import com.practice.cheetcode.repository.QuestionRepository;
 import com.practice.cheetcode.repository.SheetQuestionRepository;
 import com.practice.cheetcode.repository.SheetRepository;
+import com.practice.cheetcode.service.QuestionService;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,9 @@ public class QuestionController {
 
     @Autowired
     private SheetQuestionRepository sheetQuestionRepository;
+
+    @Autowired
+    private QuestionService questionService;
 
     @GetMapping
     public ApiResponse<?> getQuestionsByCategoryId(@RequestParam(required = false) Long categoryId, @PageableDefault(size = 20) Pageable pageable) {
@@ -118,5 +122,14 @@ public class QuestionController {
         question.setArchived(true);
         questionRepository.save(question);
         return ApiResponse.success(question, "Question archived", HttpStatus.OK);
+    }
+
+
+    @GetMapping("/random")
+    public ApiResponse<Question> getRandomQuestion(
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "lastQuestionId", required = false) Long lastQuestionId) {
+            Question question = questionService.getRandomQuestion(categoryId, lastQuestionId).orElseThrow(() -> new ResourceNotFoundException("Question not found!"));
+        return ApiResponse.success(question, "Request success", HttpStatus.OK);
     }
 }

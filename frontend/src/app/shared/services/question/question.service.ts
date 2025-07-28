@@ -10,6 +10,7 @@ import { IQuestionDataService } from "../../models/question-data";
 })
 export class QuestionService implements IQuestionDataService {
     private _questionApiService: QuestionApiService = inject(QuestionApiService);
+    private _lastRandomQuestion: IQuestion | null = null;
 
     getQuestions(page: number = 0, categoryId?: number | 'all') : Observable<PageResponse<IQuestion>> {
         return this._questionApiService.getQuestions(page, categoryId).pipe(
@@ -38,6 +39,15 @@ export class QuestionService implements IQuestionDataService {
     archiveQuestion(questionId: number): Observable<IQuestion> {
         return this._questionApiService.archiveQuestion(questionId).pipe(
             map(response => response.data)
+        );
+    }
+
+    pickRandom(categoryId: number | 'all' = 'all'): Observable<IQuestion> {
+        return this._questionApiService.pickRandom(categoryId, this._lastRandomQuestion?.id).pipe(
+            map(response => {
+                this._lastRandomQuestion = response.data;
+                return response.data;
+            })
         );
     }
 }

@@ -44,4 +44,16 @@ export class QuestionApiService {
       const url = `${this.questionsEndpoint}/archive/${questionId}`;
       return this._http.put<IApiResponse<IQuestion>>(url, {});
   }
+
+  pickRandom(categoryId: number | 'all' = 'all', lastQuestionId?: number): Observable<IApiResponse<IQuestion>> {
+      let params = new HttpParams();
+      if (categoryId !== 'all') {
+          params = params.set('categoryId', categoryId.toString());
+      }
+      if (lastQuestionId) {
+          params = params.set('lastQuestionId', lastQuestionId.toString());
+      }
+      const url = `${this.questionsEndpoint}/random`;
+      return this._http.get<IApiResponse<IQuestion>>(url, { params });
+  }
 }

@@ -16,7 +16,7 @@
                     <nz-option [nzValue]="category.id" [nzLabel]="category.name"></nz-option>
                     }
                 </nz-select>
-                <button nz-tooltip nzTooltipTitle="Pick a random question" nz-button nzType="primary" nzShape="circle"
+                <button (click)="pickRandomQuestion()" nz-tooltip nzTooltipTitle="Pick a random question" nz-button nzType="primary" nzShape="circle"
                     class="refresh-btn">
                     <nz-icon nzType="retweet" nzTheme="outline" />
                 </button>

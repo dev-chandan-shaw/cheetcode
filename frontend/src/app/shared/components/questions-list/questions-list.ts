@@ -184,7 +184,7 @@ export class QuestionsList implements OnInit {
 
   getSolvedIconTheme = (question: IQuestion): 'fill' | 'outline' => {
     const status = this.userQuestionStatusMap().get(question.id);
-    
+
     if (status?.isSolved) {
       return 'fill';
     } else if (status?.isMarkedForRevision) {
@@ -198,6 +198,17 @@ export class QuestionsList implements OnInit {
       questionId: question.id,
       isSolved: !this.isSolved(question),
     }).subscribe();
+  }
+
+  pickRandomQuestion(): void {
+    this.questionService()?.pickRandom(this.selectedCategory).subscribe({
+      next: (question: IQuestion) => {
+        window.open(question.link, '_blank');
+      },
+      error: (error) => {
+        this._messageService.error(error.error || 'Failed to pick a random question.');
+      }
+    });
   }
 }
 

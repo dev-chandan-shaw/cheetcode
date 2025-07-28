@@ -50,6 +50,14 @@ export class SheetQuestionService implements IQuestionDataService {
         return this._http.post<IApiResponse<ISheet>>(`${this.sheetQuestionsEndpoint}`, request);
     }
 
+    pickRandom(categoryId?: number | "all"): Observable<IQuestion> {
+        return this._http.get<IApiResponse<IQuestion>>(`${this.sheetQuestionsEndpoint}/random`, {
+            params: new HttpParams().set('categoryId', categoryId?.toString() || 'all')
+        }).pipe(
+            map(response => response.data)
+        );
+    }
+
     
 
 }

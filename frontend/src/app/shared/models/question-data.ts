@@ -4,4 +4,5 @@ import { PageResponse } from "./page-response";
 
 export interface IQuestionDataService {
     getQuestions(page: number, categoryId: number | 'all', extraParams?: any): Observable<PageResponse<IQuestion>>;
+    pickRandom(categoryId?: number | 'all'): Observable<IQuestion>;
 }
