@@ -15,6 +15,63 @@ nz-tag {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+// Header layout control
+.header-container {
+    .desktop-header {
+        display: flex;
+    }
+    
+    .mobile-header {
+        display: none;
+    }
+}
+
+// Mobile responsive layout
+@media screen and (max-width: 768px) {
+    .header-container {
+        .desktop-header {
+            display: none !important;
+        }
+        
+        .mobile-header {
+            display: block !important;
+        }
+        
+        .mobile-title-row {
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        .mobile-filter-row {
+            width: 100%;
+            
+            .custom-select {
+                min-width: 0;
+            }
+            
+            .mobile-refresh-btn {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+                flex-shrink: 0;
+                
+                nz-icon {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}
+
+// Filter controls responsive layout
+.filter-controls {
+    @media screen and (min-width: 769px) {
+        flex: 1;
+        min-width: 200px;
+        max-width: 300px;
+    }
+}
+
 .questions-header {
     padding: 16px;
     border-bottom: 1px solid #f0f0f0;
@@ -23,6 +80,10 @@ nz-tag {
 
 .questions-content {
     padding: 16px;
+    height: calc(100vh - 132px);
+    @media (max-width: 768px) {
+        height: calc(100vh - 196px);
+    }
 }
 
 // Card styles

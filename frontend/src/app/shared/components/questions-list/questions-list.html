@@ -1,30 +1,58 @@
 <div style="background-color: white;">
     <div class="questions-container">
-        <div nz-flex nzJustify="space-between" nzAlign="center"
-            style="padding: 1rem 2rem 0 2rem; flex-wrap: wrap; gap: 1rem;;">
-            <div nz-flex nzAlign="center" style="gap: 0.5rem;">
-                <h2 style="margin: 0;">{{ sheetName() }}</h2>
-                @if (isSharedSheet()) {
-                    <button nz-button nzType="primary" nzSize="small" nzShape="round" (click)="joinSharedSheet()">Join this sheet</button>
-                }
-            </div>
-            <div>
-                <nz-select class="custom-select" [(ngModel)]="selectedCategory"
-                    (ngModelChange)="onCategoryChange($event)" class="category-select">
-                    <nz-option nzValue="all" nzLabel="All Categories"></nz-option>
-                    @for (category of categories(); track category.id) {
-                    <nz-option [nzValue]="category.id" [nzLabel]="category.name"></nz-option>
+        <div class="header-container" style="padding: 1rem;">
+            <!-- Desktop Layout -->
+            <div class="desktop-header" nz-flex nzJustify="space-between" nzAlign="center" style="gap: 1rem;">
+                <div nz-flex nzAlign="center" style="gap: 0.5rem;">
+                    <h2 style="margin: 0; font-size: clamp(1.2rem, 4vw, 1.5rem);">{{ sheetName() }}</h2>
+                    @if (isSharedSheet()) {
+                        <button nz-button nzType="primary" nzSize="small" nzShape="round" (click)="joinSharedSheet()">Join this sheet</button>
                     }
-                </nz-select>
-                <button (click)="pickRandomQuestion()" nz-tooltip nzTooltipTitle="Pick a random question" nz-button nzType="primary" nzShape="circle"
-                    class="refresh-btn">
-                    <nz-icon nzType="retweet" nzTheme="outline" />
-                </button>
+                </div>
+                <div class="filter-controls" nz-flex nzAlign="center" nzJustify="space-between" style="gap: 0.5rem;">
+                    <nz-select class="custom-select" style="flex-grow: 1; min-width: 140px;" [(ngModel)]="selectedCategory"
+                        (ngModelChange)="onCategoryChange($event)" class="category-select">
+                        <nz-option nzValue="all" nzLabel="All Categories"></nz-option>
+                        @for (category of categories(); track category.id) {
+                        <nz-option [nzValue]="category.id" [nzLabel]="category.name"></nz-option>
+                        }
+                    </nz-select>
+                    <button (click)="pickRandomQuestion()" nz-tooltip nzTooltipTitle="Pick a random question" nz-button nzType="primary" nzShape="circle"
+                        class="refresh-btn" style="flex-shrink: 0;">
+                        <nz-icon nzType="retweet" nzTheme="outline" />
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Layout -->
+            <div class="mobile-header">
+                <!-- Top Row: Title and Join Button -->
+                <div class="mobile-title-row" nz-flex nzAlign="center" style="gap: 0.5rem; margin-bottom: 1rem;">
+                    <h2 style="margin: 0; font-size: clamp(1.2rem, 4vw, 1.5rem);">{{ sheetName() }}</h2>
+                    @if (isSharedSheet()) {
+                        <button nz-button nzType="primary" nzSize="small" nzShape="round" (click)="joinSharedSheet()">Join this sheet</button>
+                    }
+                </div>
+                
+                <!-- Bottom Row: Filter Controls -->
+                <div class="mobile-filter-row" nz-flex nzAlign="center" nzJustify="space-between" style="gap: 0.75rem;">
+                    <nz-select class="custom-select" style="flex-grow: 1;" [(ngModel)]="selectedCategory"
+                        (ngModelChange)="onCategoryChange($event)" class="category-select">
+                        <nz-option nzValue="all" nzLabel="All Categories"></nz-option>
+                        @for (category of categories(); track category.id) {
+                        <nz-option [nzValue]="category.id" [nzLabel]="category.name"></nz-option>
+                        }
+                    </nz-select>
+                    <button (click)="pickRandomQuestion()" nz-tooltip nzTooltipTitle="Pick a random question" nz-button nzType="primary" nzShape="circle"
+                        class="refresh-btn mobile-refresh-btn">
+                        <nz-icon nzType="retweet" nzTheme="outline" />
+                    </button>
+                </div>
             </div>
         </div>
 
 
-        <div class="questions-content" style="height: calc(100dvh - 116px); overflow-y: auto;">
+        <div class="questions-content" style="overflow-y: auto;">
             @if (initialLoading()) {
             <div nz-flex nzJustify="center" nzAlign="center" style="height: 100%;">
                 <nz-spin nzSimple nzSize="large"></nz-spin>
