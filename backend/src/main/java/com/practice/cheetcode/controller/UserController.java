@@ -82,7 +82,7 @@ public class UserController {
         return ApiResponse.success(loginResponse, "Logged in successfully", HttpStatus.OK);
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ApiResponse<?> signUp(@RequestBody CreateUser request) {
         var existedUser = userRepository.findByEmail(request.getEmail().toLowerCase(Locale.ROOT));
         if (existedUser.isPresent()) {

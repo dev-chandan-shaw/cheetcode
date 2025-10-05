@@ -1,59 +1,74 @@
-<div class="form-container">
-  <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" nzLayout="vertical">
+<div class="form-container p-6  rounded-xl shadow-md">
+    <form [formGroup]="questionForm" (ngSubmit)="submitForm()" class="flex flex-col gap-5">
 
-    <!-- Title -->
-    <nz-form-item>
-      <nz-form-label nzFor="title" nzRequired>Title</nz-form-label>
-      <nz-form-control nzErrorTip="Please input the question title!">
-        <input nz-input id="title" formControlName="title" placeholder="e.g., Two Sum" />
-      </nz-form-control>
-    </nz-form-item>
+        <!-- Title -->
+        <div class="flex flex-col">
+            <label for="title" class="font-medium ">Title <span class="text-red-500">*</span></label>
+            <input pInputText id="title" formControlName="title" placeholder="e.g., Two Sum" class="w-full" />
+            <p class="h-2">
+                <small class="text-red-500"
+                    *ngIf="questionForm.get('title')?.invalid && questionForm.get('title')?.touched">
+                    Please input the question title!
+                </small>
+            </p>
+        </div>
 
-    <!-- Link -->
-    <nz-form-item>
-      <nz-form-label nzFor="link" nzRequired>Link</nz-form-label>
-      <nz-form-control [nzErrorTip]="linkErrorTpl">
-        <input nz-input id="link" formControlName="link" placeholder="https://example.com/problems/two-sum" />
-        <ng-template #linkErrorTpl let-control>
-          <ng-container *ngIf="control.hasError('required')">Please input the URL!</ng-container>
-          <ng-container *ngIf="control.hasError('pattern')">The input is not a valid URL!</ng-container>
-        </ng-template>
-      </nz-form-control>
-    </nz-form-item>
+        <!-- Link -->
+        <div class="flex flex-col">
+            <label for="link" class="font-medium ">Link <span class="text-red-500">*</span></label>
+            <input pInputText id="link" formControlName="link" placeholder="https://example.com/problems/two-sum"
+                class="w-full" />
+            <p class="h-2">
+                <small class="text-red-500 "
+                    *ngIf="questionForm.get('link')?.hasError('required') && questionForm.get('link')?.touched">
+                    Please input the URL!
+                </small>
+                <small class="text-red-500  "
+                    *ngIf="questionForm.get('link')?.hasError('pattern') && questionForm.get('link')?.touched">
+                    The input is not a valid URL!
+                </small>
+            </p>
+        </div>
 
-    <!-- Category -->
-    <nz-form-item>
-      <nz-form-label nzFor="category" nzRequired>Category</nz-form-label>
-      <nz-form-control nzErrorTip="Please select a category!">
-        <nz-select id="category" formControlName="categoryId" nzPlaceHolder="Select a category">
-          @for (category of categories(); track $index) {
-            <nz-option [nzLabel]="category.name" [nzValue]="category.id"></nz-option>
-          }
-        </nz-select>
-      </nz-form-control>
-    </nz-form-item>
+        <!-- Category -->
+        <div class="flex flex-col">
+            <label for="category" class="font-medium">Category <span class="text-red-500">*</span></label>
+            <p-select tabindex="-1" appendTo="body" [options]="categories" optionLabel="name" optionValue="id"
+                formControlName="categoryId" placeholder="Select a category" class="w-full"></p-select>
+            <p class="h-2">
+                <small class="text-red-500"
+                    *ngIf="questionForm.get('categoryId')?.invalid && questionForm.get('categoryId')?.touched">
+                    Please select a category!
+                </small>
+            </p>
+        </div>
 
-    <!-- Difficulty -->
-    <nz-form-item>
-      <nz-form-label nzFor="difficulty" nzRequired>Difficulty</nz-form-label>
-      <nz-form-control nzErrorTip="Please select a difficulty level!">
-        <nz-select id="difficulty" formControlName="difficulty" nzPlaceHolder="Select a difficulty level">
-          @for (difficulty of DIFFICULTIES; track $index) {
-            <nz-option [nzLabel]="difficulty" [nzValue]="difficulty"></nz-option>
-          }
-        </nz-select>
-      </nz-form-control>
-    </nz-form-item>
+        <!-- Difficulty -->
+        <div class="flex flex-col">
+            <label for="difficulty" class="font-medium">Difficulty <span class="text-red-500">*</span></label>
+            <p-select tabindex="-1" appendTo="body" [options]="DIFFICULTIES" formControlName="difficulty"
+                placeholder="Select a difficulty level" class="w-full"></p-select>
+            <p class="h-2">
+                <small class="text-red-500"
+                    *ngIf="questionForm.get('difficulty')?.invalid && questionForm.get('difficulty')?.touched">
+                    Please select a difficulty level!
+                </small>
+            </p>
+        </div>
 
-    <!-- Submit -->
-    <nz-form-item>
-      <nz-form-control>
-        <button nz-button nzType="primary" type="submit" [nzLoading]="isLoading()" [disabled]="validateForm.invalid" class="w-full">
-          <nz-icon nzType="poweroff" />
-          <span style="margin-left: 8px;">Add Question</span>
-        </button>
-      </nz-form-control>
-    </nz-form-item>
+        <!-- Question Pattern -->
+        <div class="flex flex-col">
+            <label for="questionPatternId" class="font-medium">Question Pattern</label>
+            <p-select tabindex="-1" appendTo="body" [options]="questionPatterns" optionLabel="name" optionValue="id"
+                formControlName="questionPatternId" placeholder="Select a question pattern (optional)" class="w-full">
+            </p-select>
+        </div>
 
-  </form>
+        <!-- Submit -->
+        <div class="flex justify-end">
+            <button pButton type="submit" [label]="submitButtonText" [icon]="submitButtonIcon"
+                class="p-button-primary w-full !mt-4" [loading]="isSubmitting"
+                [disabled]="questionForm.invalid"></button>
+        </div>
+    </form>
 </div>

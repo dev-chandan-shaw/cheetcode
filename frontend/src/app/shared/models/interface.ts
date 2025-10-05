@@ -1,3 +1,5 @@
+import { Problem } from "../components/question-grid/question-grid";
+
 export interface IQuestion {
     id: number;
     title: string;
@@ -11,6 +13,7 @@ export interface IAddQuestionDto {
     categoryId: number;
     difficulty: QuestionDifficulty;
     sheetId: number;
+    questionPatternId?: number;
 }
 
 export interface IQuestionList {
@@ -29,16 +32,17 @@ export enum QuestionDifficulty {
     Hard = "HARD"
 }
 
-
 export interface ISheetQuestion {
     id: number;
-    question: IQuestion;
+    question: Problem;
 }
 
 export interface IUnapprovedQuestion {
-    id: number; 
+    id: number;
     title: string;
     link: string;
     difficulty: QuestionDifficulty;
     category: string;
 }
+
+export type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'contrast' | undefined | null;

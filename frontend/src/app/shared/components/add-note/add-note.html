@@ -1,0 +1,4 @@
+<textarea rows="16" class="w-full" pTextarea [(ngModel)]="note"></textarea>
+<div class="flex justify-end w-full">
+    <p-button label="Save" class="mt-2" (onClick)="saveNote()" [loading]="isSaving" type="submit"></p-button>
+</div>

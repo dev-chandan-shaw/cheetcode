@@ -1,0 +1,18 @@
+<div class="gap-4">
+    @if (isLoading) {
+    <div class="flex flex-col w-full justify-center items-center" [style]="{height: '160px'}">
+        <p-progressSpinner styleClass="w-3rem h-3rem"></p-progressSpinner>
+        <p class="ml-2">Loading sheets...</p>
+    </div>
+    }
+    @else {
+    @for (sheet of mySheets; track $index) {
+    <div class="flex items-center gap-2 !mb-2 !p-2">
+        <p-radiobutton name="pizza" value="{{sheet.id}}" [(ngModel)]="selectedSheetId" inputId="ingredient{{$index}}" />
+        <label for="ingredient{{$index}}" class="ml-2">{{sheet.title}}</label>
+    </div>
+    }
+    <button (click)="addQuestionToSheet()" class="w-full" pButton type="submit" label="Save"
+        class="p-button-primary w-full !mt-4" [loading]="isSaving" [disabled]="!selectedSheetId"></button>
+    }
+</div>

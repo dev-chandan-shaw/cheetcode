@@ -1,0 +1,122 @@
+@if (isLoading) {
+<p-progressbar mode="indeterminate" [style]="{ height: '4px' }" />
+} @else {
+
+<div class="border border-[var(--p-surface-800)] overflow-hidden rounded-lg shadow-sm">
+    @if (isGroupedByPattern) {
+    <!-- Grouped Table -->
+    <p-table [value]="filteredQuestions" [scrollable]="true" [scrollHeight]="'calc(100vh - 200px)'"
+        sortField="patternName" rowGroupMode="subheader" groupRowsBy="patternName"
+        [tableStyle]="{ 'min-width': '50rem' }">
+
+        <ng-template #caption>
+            <ng-container *ngTemplateOutlet="tableCaptionTemplate"></ng-container>
+        </ng-template>
+
+        <ng-template #groupheader let-question let-expanded="expanded">
+            <tr [pRowToggler]="question" class="cursor-pointer">
+                <td colspan="8">
+                    <p-button variant="text" rounded="true" class="mx-2"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" [pRowToggler]="question">
+                    </p-button>
+                    <span class="font-bold ml-2">{{ question.patternName }}</span>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template #expandedrow let-question let-rowIndex="rowIndex">
+            <ng-container
+                *ngTemplateOutlet="tableRowTemplate; context: { $implicit: question, rowIndex: rowIndex }"></ng-container>
+        </ng-template>
+        <ng-template #emptymessage>
+            <ng-container *ngTemplateOutlet="noData"></ng-container>
+        </ng-template>
+    </p-table>
+    } @else {
+    <!-- Normal Table -->
+    <p-table [paginator]="true" [rows]="20" [value]="filteredQuestions" [scrollable]="true"
+        [scrollHeight]="'calc(100vh - 250px)'" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template #caption>
+            <ng-container *ngTemplateOutlet="tableCaptionTemplate"></ng-container>
+        </ng-template>
+
+        <ng-template #body let-question let-rowIndex="rowIndex">
+            <ng-container
+                *ngTemplateOutlet="tableRowTemplate; context: { $implicit: question, rowIndex: rowIndex }"></ng-container>
+        </ng-template>
+        <ng-template #emptymessage>
+            <ng-container *ngTemplateOutlet="noData"></ng-container>
+        </ng-template>
+    </p-table>
+    }
+</div>
+
+<!-- Shared Row Template -->
+
+<ng-template #tableCaptionTemplate>
+    <div class="flex gap-4 flex-wrap mt-4 justify-end">
+        <p-button (onClick)="isGroupedByPattern = !isGroupedByPattern"
+            [icon]="isGroupedByPattern ? 'pi pi-table' : 'pi pi-list'"
+            [label]="isGroupedByPattern ? 'Ungroup' : 'Group by Pattern'" rounded="true" variant="text"></p-button>
+        <p-button label="Pick Random" rounded="true" variant="text" [icon]="'pi pi-sync'"
+            (onClick)="pickRandomQuestion()"></p-button>
+    </div>
+
+    <div class="flex gap-4 flex-wrap">
+        @for (category of categories; track $index) {
+        <div (click)="filterByCategory(category.id)" class="cursor-pointer">
+            <p-chip [icon]="category.id === selectedCategory ? 'pi pi-check' : ''" [label]="category.name" />
+        </div>
+        }
+    </div>
+</ng-template>
+
+<ng-template #tableRowTemplate let-question let-rowIndex="rowIndex">
+    <tr class="hover:bg-gray-50 cursor-pointer">
+        <td style="width: 1rem;">
+            <p-button (onClick)="toggleSolved(question.id)"
+                [icon]="questionStatuses[question.id]?.isSolved ? 'pi pi-check-circle' : 'pi pi-circle'" rounded="true"
+                variant="text"></p-button>
+        </td>
+        <td style="width: 1rem;">{{ rowIndex + 1 }}.</td>
+        <td class="w-full"><a [href]="question.link" target="_blank">{{ question.title }}</a></td>
+        <td class="w-4">
+            <p-button (onClick)="openAddNoteDialog(question.id)"
+                [icon]="questionStatuses[question.id]?.note ? 'pi pi-pen-to-square' : 'pi pi-plus'" rounded="true"
+                variant="text"></p-button>
+        </td>
+        <td class="w-4">
+            <p-button (onClick)="toggleMarkForRevision(question.id)"
+                [icon]="questionStatuses[question.id]?.isMarkedForRevision ? 'pi pi-star-fill' : 'pi pi-star'"
+                rounded="true" variant="text"></p-button>
+        </td>
+        <td><p-tag [value]="question.difficulty" [severity]="getSeverity(question.difficulty)" /></td>
+        <td class="w-4">
+            <p-button (onClick)="openMoveQuestionToSheetDialog(question.id)" icon="pi pi-forward" rounded="true"
+                variant="text"></p-button>
+        </td>
+        @if (isAdmin()) {
+        <td>
+            <p-button (onClick)="openEditQuestionDialog(question)" icon="pi pi-pencil" rounded="true"
+                variant="text"></p-button>
+        </td>
+        }
+    </tr>
+</ng-template>
+<ng-template #noData>
+    <div class="flex flex-col items-center justify-center" style="height: calc(100vh - 250px);">
+        <i class="pi pi-inbox" style="font-size: 2rem;"></i>
+        <p>No questions available.</p>
+    </div>
+</ng-template>
+
+
+<p-popover #addToSheetMenu appendTo="body" [style]="{ width: '20rem' }">
+    <h3 class="font-bold text-xl !py-4 !px-2">Add Question to Sheet</h3>
+    <div class="flex flex-col">
+        <p-select appendTo="body" [options]="mySheets" optionLabel="title" optionValue="id" formControlName="categoryId"
+            placeholder="Select a sheet" class="w-full"></p-select>
+    </div>
+    <button pButton type="submit" label="Save" class="p-button-primary w-full !mt-4"></button>
+</p-popover>
+}

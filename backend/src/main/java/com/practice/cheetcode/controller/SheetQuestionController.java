@@ -3,9 +3,7 @@ package com.practice.cheetcode.controller;
 
 import com.practice.cheetcode.Exception.BadRequestException;
 import com.practice.cheetcode.Exception.ResourceNotFoundException;
-import com.practice.cheetcode.dto.ApiResponse;
-import com.practice.cheetcode.dto.CreateSheetQuestionRequest;
-import com.practice.cheetcode.dto.PageResponse;
+import com.practice.cheetcode.dto.*;
 import com.practice.cheetcode.entity.Question;
 import com.practice.cheetcode.entity.Sheet;
 import com.practice.cheetcode.entity.SheetQuestion;
@@ -14,6 +12,7 @@ import com.practice.cheetcode.repository.QuestionRepository;
 import com.practice.cheetcode.repository.SheetQuestionRepository;
 import com.practice.cheetcode.repository.SheetRepository;
 import com.practice.cheetcode.repository.UserRepository;
+import com.practice.cheetcode.service.SheetQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +39,9 @@ public class SheetQuestionController {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private SheetQuestionService sheetQuestionService;
 
     @PostMapping
     public ApiResponse<?> createSheetQuestion(@RequestBody CreateSheetQuestionRequest req, Principal principal) {
@@ -88,6 +90,51 @@ public class SheetQuestionController {
         );
 
         return ApiResponse.success(pageResponse, "Request success", HttpStatus.OK);
+    }
+
+    @GetMapping("/sheet")
+    public ApiResponse<?> getSheetQuestions(
+            @RequestParam(required = false) Long sheetId,
+            @RequestParam(required = false) String slug,
+            @RequestParam(required = false) Long categoryId,
+            @PageableDefault(size = 20) Pageable pageable) {
+
+        if (sheetId == null && (slug == null || slug.isEmpty())) {
+            throw new BadRequestException("Either sheetId or slug must be provided.");
+        }
+
+        if (slug != null && !slug.isEmpty()) {
+            Sheet sheet = sheetRepository.findBySlug(slug)
+                    .orElseThrow(() -> new BadRequestException("Invalid sheet url."));
+            sheetId = sheet.getId();
+        }
+
+        List<SheetQuestion>  sheetQuestions = sheetQuestionRepository.findBySheetId(sheetId);
+
+        Long finalSheetId = sheetId;
+        List<SheetQuestionResponse> questionResponseList = sheetQuestions.stream().map(q -> new SheetQuestionResponse(
+                q.getId(),
+                q.getQuestion().getTitle(),
+                q.getQuestion().getLink(),
+                q.getQuestion().getCategory() != null ? q.getQuestion().getCategory().getId() : 0, // avoid NPE
+                q.getQuestion().getDifficulty(),
+                q.getQuestion().isApproved(),
+                q.getQuestion().isArchived(),
+                finalSheetId,
+                q.getQuestion().getPattern() != null ? q.getQuestion().getPattern().getName() : ""
+        )).toList();
+
+        return ApiResponse.success(questionResponseList, "Request success", HttpStatus.OK);
+    }
+
+    @GetMapping("/random")
+    public ApiResponse<Question> getRandomQuestion(
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "lastQuestionId", required = false) Long lastQuestionId,
+            @RequestParam(name = "sheetId", required = true) Long sheetId
+    ) {
+        Question question = sheetQuestionService.getRandomQuestion(categoryId, lastQuestionId, sheetId).orElseThrow(() -> new ResourceNotFoundException("Question not found!"));
+        return ApiResponse.success(question, "Request success", HttpStatus.OK);
     }
 
 }

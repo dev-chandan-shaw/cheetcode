@@ -1,28 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
-// Import the official dark less style file
-// @import "ng-zorro-antd/ng-zorro-antd.dark.less";
-.ant-table-content {
-  box-shadow: none !important;
+@import "primeicons/primeicons.css";
+@import "tailwindcss";
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: "Inter", sans-serif;
 }
 
-.ant-table-body {
-  box-shadow: none !important;
-}
-
-.ant-table-body::before,
-.ant-table-body::after {
-  background: none !important;
-  box-shadow: none !important;
-}
-
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body, html {
-  font-family: 'Inter', sans-serif;
-  color: #333;
-  background-color: rgb(242, 240, 240) !important; /* Light background for better contrast */
+body,
+html {
+    margin: auto;
+    max-width: 1440px;
 }

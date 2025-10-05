@@ -2,29 +2,35 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 // Import NG-ZORRO Modules
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzGridModule } from 'ng-zorro-antd/grid'; // For layout
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../services/auth/auth.service';
-import { IUser } from '../../../shared/models/user';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../services/auth/auth.service';
+import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { CommonModule } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
+
+import { IUser } from '../../../shared/models/user';
+
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 @Component({
   selector: 'app-login',
-  imports: [NzFormModule, NzInputModule, NzButtonModule, NzIconModule, NzGridModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ButtonModule, FloatLabelModule, CommonModule, InputTextModule, RouterModule, InputGroupModule, InputGroupAddonModule],
+  providers: [AuthService],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
 export class Login implements OnInit {
   loginForm: FormGroup;
-  passwordVisible = signal(false);
+  showPassword = false;
+  isLoading = signal(false);
   private _fb = inject(FormBuilder);
   private _router = inject(Router);
   private _authService = inject(AuthService); // Assuming AuthService is injected for login logic
   private _route = inject(ActivatedRoute);
+
 
   constructor() {
     this.loginForm = this._fb.group({
@@ -41,9 +47,6 @@ export class Login implements OnInit {
     });
   }
 
-  togglePasswordVisibility(): void {
-    this.passwordVisible.set(!this.passwordVisible());
-  }
 
   loginWithGoogle(): void {
     window.location.href = environment.googleOAuthRedirectUrl;
@@ -66,9 +69,10 @@ export class Login implements OnInit {
     }
   }
 
-  
+
   submitForm() {
     if (this.loginForm.valid) {
+      this.isLoading.set(true);
       const formData = this.loginForm.value;
       this._authService.login(formData.email, formData.password).subscribe({
         next: (response: IUser) => {
@@ -76,10 +80,12 @@ export class Login implements OnInit {
           localStorage.setItem('authToken', response.token); // Assuming the response contains a token
           localStorage.setItem('loggedInUser', JSON.stringify(response)); // Store user info
           this._router.navigate(['/home']); // Redirect to home or dashboard
+          this.isLoading.set(false);
         },
         error: (error) => {
           // Handle login error, e.g., show notification
           console.error('Login failed', error);
+          this.isLoading.set(false);
         }
       });
       // Handle form submission logic here

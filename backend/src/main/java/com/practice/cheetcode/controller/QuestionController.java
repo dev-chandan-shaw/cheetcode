@@ -1,14 +1,8 @@
 package com.practice.cheetcode.controller;
 import com.practice.cheetcode.Exception.ResourceNotFoundException;
 import com.practice.cheetcode.dto.*;
-import com.practice.cheetcode.entity.Category;
-import com.practice.cheetcode.entity.Question;
-import com.practice.cheetcode.entity.Sheet;
-import com.practice.cheetcode.entity.SheetQuestion;
-import com.practice.cheetcode.repository.CategoryRepository;
-import com.practice.cheetcode.repository.QuestionRepository;
-import com.practice.cheetcode.repository.SheetQuestionRepository;
-import com.practice.cheetcode.repository.SheetRepository;
+import com.practice.cheetcode.entity.*;
+import com.practice.cheetcode.repository.*;
 import com.practice.cheetcode.service.QuestionService;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,38 +34,60 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
-    @GetMapping
-    public ApiResponse<?> getQuestionsByCategoryId(@RequestParam(required = false) Long categoryId, @PageableDefault(size = 20) Pageable pageable) {
-        Page<Question> page;
-        if (categoryId == null) {
-            page = questionRepository.findByApproved(pageable, true);
-        } else {
-            page = questionRepository.findByCategoryIdAndApproved(categoryId, pageable, true);
-        }
-        PageResponse<Question> pageResponse = new PageResponse<>(
-                page.getContent(),
-                page.getPageable().getPageNumber(),
-                page.getPageable().getPageSize(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                !page.isLast()
-        );
-        return ApiResponse.success(pageResponse, "Request success", HttpStatus.OK);
+    @Autowired
+    private QuestionPatternRepository questionPatternRepository;
+
+//    @GetMapping()
+//    public ApiResponse<?> getQuestionsByCategoryId(@RequestParam(required = false) Long categoryId, @PageableDefault(size = 20) Pageable pageable) {
+//        Page<Question> page;
+//        if (categoryId == null) {
+//            page = questionRepository.findByApproved(pageable, true);
+//        } else {
+//            page = questionRepository.findByCategoryIdAndApproved(categoryId, pageable, true);
+//        }
+//        PageResponse<Question> pageResponse = new PageResponse<>(
+//                page.getContent(),
+//                page.getPageable().getPageNumber(),
+//                page.getPageable().getPageSize(),
+//                page.getTotalElements(),
+//                page.getTotalPages(),
+//                !page.isLast()
+//        );
+//        return ApiResponse.success(pageResponse, "Request success", HttpStatus.OK);
+//    }
+
+    @GetMapping()
+    public ApiResponse<?> getAllQuestion() {
+        List<Question> byApproved = questionRepository.findByApproved(true);
+        List<QuestionResponseDto> questionResponseList = byApproved.stream().map(q -> new QuestionResponseDto(
+                q.getId(),
+                q.getTitle(),
+                q.getLink(),
+                q.getCategory() != null ? q.getCategory().getId() : 0, // avoid NPE
+                q.getDifficulty(),
+                q.isApproved(),
+                q.isArchived(),
+                q.getPattern() != null ? q.getPattern().getName() : ""
+        )).toList();
+        return ApiResponse.success(questionResponseList, "Request Success", HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> createQuestion(@RequestBody AddQuestionDto req) {
         long categoryId = req.getCategoryId();
         long sheetId = req.getSheetId();
+        long questionPatternId = req.getQuestionPatternId();
 
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found!"));
         Sheet sheet = sheetRepository.findById(sheetId).orElseThrow(() -> new ResourceNotFoundException("Sheet not found!"));
+        Optional<QuestionPattern> questionPattern = questionPatternRepository.findById(questionPatternId);
 
         Question question = new Question();
         question.setLink(req.getLink());
         question.setTitle(req.getTitle());
         question.setCategory(category);
         question.setDifficulty(req.getDifficulty());
+        questionPattern.ifPresent(question::setPattern);
         questionRepository.save(question);
 
         SheetQuestion sheetQuestion = new SheetQuestion();
@@ -81,6 +97,37 @@ public class QuestionController {
 
         return ResponseEntity.ok(question);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateQuestion(@PathVariable Long id, @RequestBody AddQuestionDto req) {
+        // Fetch existing question
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found!"));
+
+        // Update basic fields
+        question.setTitle(req.getTitle());
+        question.setLink(req.getLink());
+        question.setDifficulty(req.getDifficulty());
+
+        // Update category if provided
+        if (req.getCategoryId() != 0) {
+            Category category = categoryRepository.findById(req.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found!"));
+            question.setCategory(category);
+        }
+
+        // Update pattern if provided
+        if (req.getQuestionPatternId() != 0) {
+            Optional<QuestionPattern> pattern = questionPatternRepository.findById(req.getQuestionPatternId());
+            pattern.ifPresent(question::setPattern);
+        }
+
+        // Save the updated question
+        questionRepository.save(question);
+
+        return ResponseEntity.ok(question);
+    }
+
 
     @GetMapping("/unapproved")
     public ApiResponse<?> getUnapprovedQuestions(@PageableDefault(size = 20) Pageable pageable) {
@@ -132,4 +179,5 @@ public class QuestionController {
             Question question = questionService.getRandomQuestion(categoryId, lastQuestionId).orElseThrow(() -> new ResourceNotFoundException("Question not found!"));
         return ApiResponse.success(question, "Request success", HttpStatus.OK);
     }
+
 }

@@ -10,4 +10,5 @@ public class AddQuestionDto {
     private long categoryId;
     private QuestionDifficulty difficulty;
     private long sheetId;
+    private long questionPatternId;
 }

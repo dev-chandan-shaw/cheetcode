@@ -1,0 +1,45 @@
+<h2 class="!py-4 text-xl font-semibold">Requested Questions</h2>
+
+<!-- Loading Spinner -->
+@if (isLoading()) {
+<p-card>
+    <div class="flex justify-center items-center py-8">
+        <p-progressSpinner styleClass="w-6 h-6" strokeWidth="4" fill="var(--p-surface-100)" animationDuration=".5s" />
+    </div>
+</p-card>
+} @else {
+
+@for (question of unapprovedQuestions(); track $index) {
+<p-card class="!mb-2 shadow-sm rounded-2xl ">
+    <div class="flex justify-between items-center">
+        <!-- Left Section: Title + Difficulty -->
+        <div class="text-base font-normal">
+            <span class="!mr-4">{{$index + 1}}. </span> <span>{{ question.title }} ({{ question.category }})</span>
+
+        </div>
+
+        <!-- Right Section: Actions -->
+        <div class="flex items-center gap-12 justify-between">
+            <p-chip [style]="{'font-size': '12px', 'padding' : '6px 12px'}" [label]="question.difficulty"></p-chip>
+            <div class="flex items-center gap-4">
+                <p-button variant="text" rounded="true" (onClick)="viewQuestion(question)"
+                    icon="pi pi-external-link"></p-button>
+
+                <p-button variant="text" rounded="true" (onClick)="confirmApprove(question)"
+                    icon="pi pi-check"></p-button>
+
+                <p-button variant="text" severity="danger" rounded="true" (onClick)="archiveQuestion(question)"
+                    icon="pi pi-trash"></p-button>
+
+            </div>
+        </div>
+    </div>
+</p-card>
+} @empty {
+<p-card>
+    <div class="flex justify-center items-center !py-16">
+        <h2 class="text-lg font-semibold">No new questions requested!</h2>
+    </div>
+</p-card>
+}
+}

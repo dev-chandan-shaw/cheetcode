@@ -35,4 +35,21 @@ public class Question {
     @JsonProperty("isArchived")
     private boolean archived;
 
+    @ManyToOne
+    @JoinColumn(name = "question_pattern_id")
+    @JsonBackReference
+    private QuestionPattern pattern;
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", link='" + link + '\'' +
+                ", category=" + category.getName() +
+                ", difficulty=" + difficulty +
+                ", approved=" + approved +
+                ", archived=" + archived +
+                '}';
+    }
 }

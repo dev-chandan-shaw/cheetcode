@@ -1,0 +1,95 @@
+<p-card>
+    <p-tabs value="0">
+
+        <!-- Tab Headers -->
+        <p-tablist>
+            <p-tab value="0">My Sheets</p-tab>
+            <p-tab value="1">Saved Sheets</p-tab>
+        </p-tablist>
+
+        <!-- Tab Panels -->
+        <p-tabpanels>
+
+            <!-- My Sheets Tab -->
+            <p-tabpanel value="0">
+                <div class="flex justify-end mb-3">
+                    <p-button icon="pi pi-plus" label="Create Sheet" outlined="true" rounded="true"
+                        class="p-button-rounded p-button-primary p-button-sm"
+                        (click)="openCreateSheetModal()"></p-button>
+                </div>
+
+                <div style="max-height: calc(100dvh - 130px); overflow-y: auto;">
+                    @if (!loading()) {
+                    @for (sheet of sheets(); track $index) {
+                    <div class="flex items-center mb-3 gap-3 w-full">
+                        <span>{{$index + 1}}.</span><ng-container
+                            *ngTemplateOutlet="sheetCard; context: { $implicit: sheet }"></ng-container>
+                    </div>
+                    }
+                    @empty {
+                    <p-card>
+                        <div class="flex flex-col items-center justify-center" style="height: 160px;">
+                            <i class="pi pi-folder-open" style="font-size: 3rem;"></i>
+                            <p>No sheets available.</p>
+                        </div>
+                    </p-card>
+                    }
+                    } @else {
+                    <div class="flex flex-col w-full justify-center items-center" [style]="{height: '160px'}">
+                        <p-progressSpinner styleClass="w-3rem h-3rem"></p-progressSpinner>
+                        <p class="ml-2">Loading sheets...</p>
+                    </div>
+                    }
+                </div>
+            </p-tabpanel>
+
+            <!-- Shared Sheets Tab -->
+            <p-tabpanel value="1">
+                <div class="flex justify-end mb-3">
+                    <p-button icon="pi pi-plus" label="Join sheet" outlined="true" rounded="true"
+                        class="p-button-rounded p-button-primary p-button-sm" (click)="openJoinSheetModal()"></p-button>
+                </div>
+
+                <div style="max-height: calc(100dvh - 130px); overflow-y: auto;">
+                    @if (!loading()) {
+                    @for (sheet of sharedSheets(); track $index) {
+                    <div class="flex items-center mb-3 gap-3 w-full">
+                        <span>{{$index + 1}}.</span>
+                        <ng-container *ngTemplateOutlet="sheetCard; context: { $implicit: sheet }"></ng-container>
+                    </div>
+                    }
+                    @empty {
+                    <p-card>
+                        <div class="flex flex-col items-center justify-center" style="height: 160px;">
+                            <i class="pi pi-folder-open" style="font-size: 3rem;"></i>
+                            <p>No sheets available.</p>
+                        </div>
+                    </p-card>
+                    }
+                    } @else {
+                    <div class="flex flex-col w-full justify-center items-center" [style]="{height: '160px'}">
+                        <p-progressSpinner styleClass="w-3rem h-3rem"></p-progressSpinner>
+                        <p class="ml-2">Loading sheets...</p>
+                    </div>
+                    }
+                </div>
+            </p-tabpanel>
+
+        </p-tabpanels>
+    </p-tabs>
+</p-card>
+
+<ng-template #sheetCard let-sheet>
+    <p-card styleClass="w-full">
+        <div class="flex justify-between  items-center">
+            <h3>{{ sheet.title }}</h3>
+            <div class="flex gap-6">
+                <p-button rounded="true" icon="pi pi-share-alt" (click)="copyToClipboard(sheet.slug)"
+                    variant="text"></p-button>
+                <p-button rounded="true" icon="pi pi-eye" [routerLink]="['/sheet', sheet.id]" variant="text"></p-button>
+                <p-button pTooltip="Add question" tooltipPosition="bottom" rounded="true" variant="text"
+                    icon="pi pi-plus" (click)="openAddQuestionModal(sheet.id)"></p-button>
+            </div>
+        </div>
+    </p-card>
+</ng-template>

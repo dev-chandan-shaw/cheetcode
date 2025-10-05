@@ -8,13 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Page<Question> findByCategoryIdAndApproved(long categoryId, Pageable pageable, boolean approved);
-    Page<Question> findByApproved(Pageable pageable, boolean approved);
 
+    Page<Question> findByApproved(Pageable pageable, boolean approved);
+    List<Question> findByApproved(boolean approved);
     Page<Question> findByApprovedAndArchived(Pageable pageable, boolean approved, boolean archived);
 
     @Query(value = "SELECT * FROM question WHERE approved = true AND archived = false ORDER BY RANDOM() LIMIT 1", nativeQuery = true)

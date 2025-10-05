@@ -1,107 +1,176 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzTypographyModule } from 'ng-zorro-antd/typography';
-import { CategoryService } from '../../services/category/cateogory.service';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { ICategory } from '../../models/category';
+import { CategoryApiService } from '../../services/category-api.service';
+import { Select } from "primeng/select";
+import { QuestionService } from '../../services/question.service';
 import { IAddQuestionDto, QuestionDifficulty } from '../../models/interface';
-import { QuestionService } from '../../services/question/question.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
+import { MessageService } from 'primeng/api';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Problem } from '../question-grid/question-grid';
+import { QuestionPatternService } from '../../services/question-pattern.service';
 
 @Component({
   selector: 'app-add-question',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzSelectModule,
-    NzButtonModule,
-    NzCardModule,
-    NzLayoutModule,
-    NzGridModule,
-    NzTypographyModule,
-    CommonModule
-  ],
+  imports: [InputTextModule, ButtonModule, ReactiveFormsModule, CommonModule, Select],
   templateUrl: './add-question.html',
   styleUrl: './add-question.scss'
 })
-export class AddQuestion {
-
-  validateForm!: FormGroup;
-  categories = signal<ICategory[]>([]);
-  readonly isLoading = signal(false);
-  readonly sheetId = inject(NZ_MODAL_DATA).sheetId; // Assuming sheetId is passed as modal data
+export class AddQuestion implements OnInit {
   readonly DIFFICULTIES = Object.values(QuestionDifficulty);
-  private readonly _categoryService = inject(CategoryService);
-  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _categoryService = inject(CategoryApiService);
   private readonly _questionService = inject(QuestionService);
-  private _messageService = inject(NzMessageService);
-  private _modalRef = inject(NzModalRef);
+  private readonly _messageService = inject(MessageService);
+  private readonly _modalRef = inject(DynamicDialogRef);
+  private readonly _config = inject(DynamicDialogConfig);
+  private readonly _questionPatternService = inject(QuestionPatternService);
+
+  questionForm: FormGroup;
+  categories: ICategory[] = [];
+  questionPatterns: { id: number, name: string }[] = [];
+  isSubmitting: boolean = false;
+  isEditMode: boolean = false;
+  questionToEdit?: Problem;
 
 
-  ngOnInit(): void {
-    this.validateForm = this._fb.group({
-      title: [null, [Validators.required]],
-      link: [null, [Validators.required, Validators.pattern('https?://.+')]],
-      categoryId: [null, [Validators.required]],
-      difficulty: [null, [Validators.required]],
+  constructor(private fb: FormBuilder) {
+    this.questionForm = this.fb.group({
+      title: ['', Validators.required],
+      link: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
+      categoryId: [null, Validators.required],
+      difficulty: [null, Validators.required],
+      questionPatternId: [null] // Optional field for question pattern
     });
-    this._loadCategories();
   }
 
-  /**
-   * Handles the form submission.
-   */
-  submitForm(): void {
-    // Check if the form is valid
-    if (this.validateForm.valid) {
-      this.addQuestion();
+  ngOnInit() {
+    // Check if we're in edit mode
+    this.questionToEdit = this._config.data?.question;
+    this.isEditMode = !!this.questionToEdit;
+
+
+
+    if (this.isEditMode && this.questionToEdit) {
+      this.questionForm.patchValue({
+        title: this.questionToEdit.title,
+        link: this.questionToEdit.link,
+        categoryId: this.questionToEdit.categoryId,
+        difficulty: this.questionToEdit.difficulty,
+        questionPatternId: this.questionToEdit.patternName ? this.questionPatterns.find(p => p.name === this.questionToEdit?.patternName)?.id : null
+      });
+    }
+
+
+
+    //load question patterns
+    this._questionPatternService.getAllQuestionPatterns().subscribe({
+      next: (res) => {
+        console.log('Question Patterns:', res);
+        this.questionPatterns = res;
+      },
+      error: (err) => {
+        console.error('Error fetching question patterns:', err);
+      }
+    });
+
+    // Load categories
+    this._categoryService.getCategories().subscribe({
+      next: (res) => {
+        this.categories = res.data;
+
+        // If editing, populate the form with existing data
+
+      },
+      error: (err) => {
+        console.error('Error fetching categories:', err);
+      }
+    });
+  }
+
+  submitForm() {
+    if (this.questionForm.invalid) {
+      return;
+    }
+
+    this.isSubmitting = true;
+    const formData = this.questionForm.value;
+
+    if (this.isEditMode && this.questionToEdit) {
+      // Update existing question
+      const updateData: Partial<IAddQuestionDto> = {
+        title: formData.title,
+        link: formData.link,
+        categoryId: formData.categoryId,
+        difficulty: formData.difficulty,
+        questionPatternId: formData.questionPatternId
+      };
+
+      this._questionService.updateQuestion(this.questionToEdit.id, updateData).subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          this._messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Question updated successfully!'
+          });
+          this._modalRef.close(response.data);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error updating question:', error);
+          this._messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update question. Please try again.'
+          });
+        }
+      });
     } else {
-      this.validateForm.markAllAsTouched(); // Mark all controls as touched to show validation errors
+      // Add new question
+      const data: IAddQuestionDto = {
+        title: formData.title,
+        link: formData.link,
+        categoryId: formData.categoryId,
+        difficulty: formData.difficulty,
+        sheetId: this._config.data?.sheetId
+      };
+
+      this._questionService.addQuestion(data).subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          this._messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Question added successfully!'
+          });
+          this._modalRef.close(response.data);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error adding question:', error);
+          this._messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to add question. Please try again.'
+          });
+        }
+      });
     }
   }
 
-  /**
-   * Loads categories from the CategoryService.
-   */
-  private _loadCategories() {
-    this._categoryService.getCategories().subscribe(categories => {
-      this.categories.set(categories);
-    });
+  get modalTitle(): string {
+    return this.isEditMode ? 'Edit Question' : 'Add Question';
   }
 
-  /**
-   * Adds a new question using the QuestionService.
-   */
-  addQuestion() {
-    this.isLoading.set(true);
-    const data : IAddQuestionDto = {
-      title: this.validateForm.value.title,
-      link: this.validateForm.value.link,
-      categoryId: this.validateForm.value.categoryId,
-      difficulty: this.validateForm.value.difficulty,
-      sheetId: this.sheetId
-    };
-    this._questionService.addQuestion(data).subscribe({
-      next: (question) => {
-        this.isLoading.set(false);
-        this._messageService.success('Question added successfully!');
-        this._modalRef.close(question); // Close the modal and return the new question
-      },
-      error: (error) => {
-        this.isLoading.set(false);
-        console.error('Error adding question:', error);
-        this._messageService.error('Failed to add question. Please try again.');
-      }
-    });
+  get submitButtonText(): string {
+    return this.isEditMode ? 'Update Question' : 'Add Question';
+  }
+
+  get submitButtonIcon(): string {
+    return this.isEditMode ? 'pi pi-check' : 'pi pi-plus';
   }
 }

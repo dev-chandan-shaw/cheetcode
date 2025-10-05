@@ -1,45 +1,38 @@
-import { Routes } from '@angular/router';
-import { authGuard } from '../core/guards/auth-guard';
-import { adminGuard } from '../core/guards/admin-guard';
+import { Routes } from "@angular/router";
+import { adminGuard } from "../core/guards/admin-guard";
 
-export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
-  },
-  {
-    path: '',
-    canActivate: [authGuard],
-    loadComponent: () => import('./modules').then(m => m.Modules),
-    children: [
-      {
-        path: 'home',
-        loadComponent: () =>
-          import('./pages/home/home').then((m) => m.Home)
-      },
-      {
-        path: 'sheet',
-        loadComponent: () =>
-          import('./pages/sheet/sheet').then((m) => m.Sheet)
-      },
-      {
-        path: 'sheet/:sheetId',
-        loadComponent: () =>
-          import('./pages/sheet-questions/sheet-questions').then((m) => m.SheetQuestions)
-      },
-      {
-        path: 'shared-sheet/:slug',
-        loadComponent: () =>
-          import('./pages/sheet-questions/sheet-questions').then((m) => m.SheetQuestions)
-      },
-      {
-        path: 'admin',
-        loadComponent: () =>
-          import('./pages/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
-        canActivate: [adminGuard],
-      }
-    ]
-  },
+export const ROUTES: Routes = [
+    {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+    },
+    {
+        path: '',
+        loadComponent: () => import('./modules').then(m => m.Modules),
+        children: [
+            {
+                path: 'home',
+                loadComponent: () => import('./components/home/home').then(m => m.Home),
+            },
+            {
+                path: 'sheet',
+                loadComponent: () => import('./components/sheet/sheet').then(m => m.Sheet),
+            },
+            {
+                path: 'sheet/:sheetId',
+                loadComponent: () => import('./components/sheet/sheet-question/sheet-question').then(m => m.SheetQuestion),
+            },
+            {
+                path: 'sheet/by-slug/:sheetSlug',
+                loadComponent: () => import('./components/sheet/sheet-question/sheet-question').then(m => m.SheetQuestion),
+            },
+            {
+                path: 'admin',
+                loadComponent: () => import('./components/admin/admin').then(m => m.Admin),
+                canActivate: [adminGuard]
+            }
+        ]
+    },
 
 ];
