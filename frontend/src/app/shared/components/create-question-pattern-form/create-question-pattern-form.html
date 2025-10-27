@@ -1,0 +1,35 @@
+<div class="form-container p-6  rounded-xl shadow-md">
+    <form [formGroup]="questionPatternForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+
+        <!-- Name -->
+        <div class="flex flex-col">
+            <label for="name" class="font-medium ">Name<span class="text-red-500">*</span></label>
+            <input pInputText id="name" formControlName="name" placeholder="e.g., BFS and DFS" class="w-full" />
+            <p class="h-2">
+                <small class="text-red-500"
+                    *ngIf="questionPatternForm.get('name')?.invalid && questionPatternForm.get('name')?.touched">
+                    Please input the question pattern name!
+                </small>
+            </p>
+        </div>
+
+        <!-- Category -->
+        <div class="flex flex-col">
+            <label for="category" class="font-medium">Category <span class="text-red-500">*</span></label>
+            <p-select tabindex="-1" appendTo="body" [options]="categories" optionLabel="name" optionValue="id"
+                formControlName="categoryId" placeholder="Select a category" class="w-full"></p-select>
+            <p class="h-2">
+                <small class="text-red-500"
+                    *ngIf="questionPatternForm.get('categoryId')?.invalid && questionPatternForm.get('categoryId')?.touched">
+                    Please select a category!
+                </small>
+            </p>
+        </div>
+        <!-- Submit -->
+        <div class="flex justify-end">
+            <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [loading]="isLoading"
+                class="p-button-primary w-full !mt-4" [loading]="isLoading"
+                [disabled]="questionPatternForm.invalid"></button>
+        </div>
+    </form>
+</div>

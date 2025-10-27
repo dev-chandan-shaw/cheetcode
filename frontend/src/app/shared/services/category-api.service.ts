@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { ICategory } from "../models/category";
 import { IApiResponse } from "../models/api-response";
 import { environment } from "../../../environments/environment";
@@ -24,5 +24,17 @@ export class CategoryApiService {
       return res;
     }));
     return this._categories;
+  }
+
+  createCategory(name: string): Observable<IApiResponse<ICategory>> {
+    const params = new HttpParams();
+    params.set('name', name);
+    return this._http.post<IApiResponse<ICategory>>(this.questionsEndpoint, {}, { params });
+  }
+
+  updateCategory(id: number, name: string): Observable<IApiResponse<ICategory>> {
+    const params = new HttpParams();
+    params.set('name', name);
+    return this._http.put<IApiResponse<ICategory>>(`${this.questionsEndpoint}/${id}`, {}, { params });
   }
 }

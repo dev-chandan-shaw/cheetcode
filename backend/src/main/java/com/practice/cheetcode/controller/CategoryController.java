@@ -1,5 +1,6 @@
 package com.practice.cheetcode.controller;
 
+import com.practice.cheetcode.Exception.ResourceNotFoundException;
 import com.practice.cheetcode.dto.ApiResponse;
 import com.practice.cheetcode.entity.Category;
 import com.practice.cheetcode.repository.CategoryRepository;
@@ -25,6 +26,14 @@ public class CategoryController {
             return  ResponseEntity.badRequest().body("Category name already exist.");
         }
         Category category = new Category();
+        category.setName(name);
+        categoryRepository.save(category);
+        return ResponseEntity.ok(category);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCategory(@RequestParam String name, @PathVariable Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found!"));
         category.setName(name);
         categoryRepository.save(category);
         return ResponseEntity.ok(category);

@@ -17,5 +17,9 @@ public class QuestionPattern {
     @OneToMany(mappedBy = "pattern", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Question> questions;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
 

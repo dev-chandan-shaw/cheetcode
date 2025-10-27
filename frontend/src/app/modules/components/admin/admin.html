@@ -1,5 +1,3 @@
-<h2 class="!py-4 text-xl font-semibold">Requested Questions</h2>
-
 <!-- Loading Spinner -->
 @if (isLoading()) {
 <p-card>
@@ -9,37 +7,101 @@
 </p-card>
 } @else {
 
-@for (question of unapprovedQuestions(); track $index) {
-<p-card class="!mb-2 shadow-sm rounded-2xl ">
-    <div class="flex justify-between items-center">
-        <!-- Left Section: Title + Difficulty -->
-        <div class="text-base font-normal">
-            <span class="!mr-4">{{$index + 1}}. </span> <span>{{ question.title }} ({{ question.category }})</span>
-
-        </div>
-
-        <!-- Right Section: Actions -->
-        <div class="flex items-center gap-12 justify-between">
-            <p-chip [style]="{'font-size': '12px', 'padding' : '6px 12px'}" [label]="question.difficulty"></p-chip>
-            <div class="flex items-center gap-4">
-                <p-button variant="text" rounded="true" (onClick)="viewQuestion(question)"
-                    icon="pi pi-external-link"></p-button>
-
-                <p-button variant="text" rounded="true" (onClick)="confirmApprove(question)"
-                    icon="pi pi-check"></p-button>
-
-                <p-button variant="text" severity="danger" rounded="true" (onClick)="archiveQuestion(question)"
-                    icon="pi pi-trash"></p-button>
-
+<p-tabs value="0">
+    <p-tablist>
+        <p-tab value="0">Categories</p-tab>
+        <p-tab value="1">Question Patterns</p-tab>
+        <p-tab value="2">Questions</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+        <p-tabpanel value="0">
+            <div class="flex justify-end">
+                <p-button label="Add Category" icon="pi pi-plus" rounded="true" outlined="true" class="p-button-primary"
+                    (onClick)="addCategory()"></p-button>
             </div>
-        </div>
-    </div>
-</p-card>
-} @empty {
-<p-card>
-    <div class="flex justify-center items-center !py-16">
-        <h2 class="text-lg font-semibold">No new questions requested!</h2>
-    </div>
-</p-card>
-}
+            <p-card class="h-[calc(100vh-220px)] overflow-y-auto shadow-sm rounded-2xl p-6">
+                <!-- Categories List -->
+
+                @for (category of categories; track category.id) {
+                <p-card class="!mb-1">
+                    <div class="flex justify-between items-center">
+                        <div class="text-base font-normal">
+                            <span class="!mr-4">{{category.name}}</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <p-button variant="text" rounded="true" (onClick)="updateCategory(category)"
+                                icon="pi pi-pencil"></p-button>
+                        </div>
+                    </div>
+                </p-card>
+                }
+            </p-card>
+        </p-tabpanel>
+        <p-tabpanel value="1">
+            <div class="flex justify-end !mb-4">
+                <p-button label="Add Question Pattern" icon="pi pi-plus" rounded="true" outlined="true"
+                    class="p-button-primary" (onClick)="openAddQuestionPatternDialog()"></p-button>
+            </div>
+            <div class="flex gap-4 flex-wrap">
+                @for (category of categories; track $index) {
+                <div (click)="selectQuestionPatternCategory(category.id)" class="cursor-pointer">
+                    <p-chip [icon]="category.id === selectedCategory() ? 'pi pi-check' : ''" [label]="category.name" />
+                </div>
+                }
+            </div>
+            <p-card class="h-[calc(100vh-260px)] overflow-y-auto shadow-sm rounded-2xl p-6">
+                <!-- Question Patterns List -->
+
+                @for (pattern of filteredQuestionPatterns(); track pattern.id) {
+                <p-card class="!mb-1">
+                    <div class="flex justify-between items-center">
+                        <div class="text-base font-normal">
+                            <span class="!mr-4">{{pattern.name}}</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <p-button variant="text" rounded="true" (onClick)="editQuestionPattern(pattern)"
+                                icon="pi pi-pencil"></p-button>
+                        </div>
+                    </div>
+                </p-card>
+                }
+            </p-card>
+        </p-tabpanel>
+        <p-tabpanel value="2">
+            @for (question of unapprovedQuestions(); track $index) {
+            <p-card class="!mb-2 shadow-sm rounded-2xl h-[calc(100vh-260px)] ">
+                <div class="flex justify-between items-center">
+                    <!-- Left Section: Title + Difficulty -->
+                    <div class="text-base font-normal">
+                        <span class="!mr-4">{{$index + 1}}. </span> <span>{{ question.title }} ({{ question.category
+                            }})</span>
+
+                    </div>
+
+                    <!-- Right Section: Actions -->
+                    <div class="flex items-center gap-12 justify-between">
+                        <p-chip [style]="{'font-size': '12px', 'padding' : '6px 12px'}"
+                            [label]="question.difficulty"></p-chip>
+                        <div class="flex items-center gap-4">
+                            <p-button variant="text" rounded="true" (onClick)="viewQuestion(question)"
+                                icon="pi pi-external-link"></p-button>
+
+                            <p-button variant="text" rounded="true" (onClick)="confirmApprove(question)"
+                                icon="pi pi-check"></p-button>
+
+                            <p-button variant="text" severity="danger" rounded="true"
+                                (onClick)="archiveQuestion(question)" icon="pi pi-trash"></p-button>
+
+                        </div>
+                    </div>
+                </div>
+            </p-card>
+            } @empty {
+            <p-card class="shadow-sm !flex justify-center items-center rounded-2xl h-[calc(100vh-180px)]">
+                <h2 class="text-lg font-semibold">No new questions requested!</h2>
+            </p-card>
+            }
+        </p-tabpanel>
+    </p-tabpanels>
+</p-tabs>
 }

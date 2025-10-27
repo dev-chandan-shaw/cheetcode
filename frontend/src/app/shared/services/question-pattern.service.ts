@@ -7,6 +7,7 @@ import { IApiResponse } from "../models/api-response";
 export interface QuestionPattern {
     id: number;
     name: string;
+    categoryId?: number;
 }
 @Injectable({
     providedIn: "root",
@@ -23,8 +24,13 @@ export class QuestionPatternService {
         );
     }
 
-    createQuestionPattern(name: string) {
-        const params = { name };
-        return this._http.post(`${this.questionsEndpoint}`, {}, { params });
+    createQuestionPattern(req: { name: string, categoryId: number }) {
+        return this._http.post(`${this.questionsEndpoint}`, req);
+    }
+
+    updateQuestionPattern(id: number, req: { name: string, categoryId: number }): Observable<QuestionPattern> {
+        return this._http.put<IApiResponse<QuestionPattern>>(`${this.questionsEndpoint}/${id}`, req).pipe(
+            map(response => response.data)
+        );
     }
 }
