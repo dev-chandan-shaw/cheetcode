@@ -13,6 +13,13 @@ import { MessageService } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Problem } from '../question-grid/question-grid';
 import { QuestionPatternService } from '../../services/question-pattern.service';
+import { forkJoin } from 'rxjs';
+
+export interface IQuestionPattern {
+  id: number;
+  name: string;
+  categoryId?: number;
+}
 
 @Component({
   selector: 'app-add-question',
@@ -31,7 +38,8 @@ export class AddQuestion implements OnInit {
 
   questionForm: FormGroup;
   categories: ICategory[] = [];
-  questionPatterns: { id: number, name: string }[] = [];
+  questionPatterns: IQuestionPattern[] = [];
+  filteredQuestionPatterns: IQuestionPattern[] = [];
   isSubmitting: boolean = false;
   isEditMode: boolean = false;
   questionToEdit?: Problem;
@@ -43,7 +51,7 @@ export class AddQuestion implements OnInit {
       link: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
       categoryId: [null, Validators.required],
       difficulty: [null, Validators.required],
-      questionPatternId: [null] // Optional field for question pattern
+      questionPatternId: [null, Validators.required]
     });
   }
 
@@ -51,6 +59,13 @@ export class AddQuestion implements OnInit {
     // Check if we're in edit mode
     this.questionToEdit = this._config.data?.question;
     this.isEditMode = !!this.questionToEdit;
+
+    this.questionForm.get('categoryId')?.valueChanges.subscribe(categoryId => {
+      // Filter the patterns based on selected category
+      this.filteredQuestionPatterns = this.questionPatterns.filter(pattern =>
+        !categoryId || pattern.categoryId === categoryId
+      );
+    });
 
 
 
@@ -60,35 +75,26 @@ export class AddQuestion implements OnInit {
         link: this.questionToEdit.link,
         categoryId: this.questionToEdit.categoryId,
         difficulty: this.questionToEdit.difficulty,
-        questionPatternId: this.questionToEdit.patternName ? this.questionPatterns.find(p => p.name === this.questionToEdit?.patternName)?.id : null
+        questionPatternId: this.questionToEdit.patternId
       });
     }
 
-
-
-    //load question patterns
-    this._questionPatternService.getAllQuestionPatterns().subscribe({
-      next: (res) => {
-        console.log('Question Patterns:', res);
-        this.questionPatterns = res;
-      },
-      error: (err) => {
-        console.error('Error fetching question patterns:', err);
-      }
-    });
-
-    // Load categories
-    this._categoryService.getCategories().subscribe({
-      next: (res) => {
-        this.categories = res.data;
-
-        // If editing, populate the form with existing data
-
+    forkJoin({
+      categories: this._categoryService.getCategories(),
+      questionPatterns: this._questionPatternService.getAllQuestionPatterns()
+    }).subscribe({
+      next: ({ categories, questionPatterns }) => {
+        this.categories = categories.data;
+        this.questionPatterns = questionPatterns;
+        this.filteredQuestionPatterns = questionPatterns.filter(pattern =>
+          pattern.categoryId === this.questionForm.get('categoryId')?.value
+        );
       },
       error: (err) => {
         console.error('Error fetching categories:', err);
       }
     });
+
   }
 
   submitForm() {
@@ -117,7 +123,11 @@ export class AddQuestion implements OnInit {
             summary: 'Success',
             detail: 'Question updated successfully!'
           });
-          this._modalRef.close(response.data);
+          this._modalRef.close({
+            ...this.questionToEdit,
+            ...updateData,
+            patternId: formData.questionPatternId
+          });
         },
         error: (error) => {
           this.isSubmitting = false;

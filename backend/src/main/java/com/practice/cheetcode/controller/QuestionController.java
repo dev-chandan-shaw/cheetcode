@@ -59,6 +59,7 @@ public class QuestionController {
     @GetMapping()
     public ApiResponse<?> getAllQuestion() {
         List<Question> byApproved = questionRepository.findByApproved(true);
+
         List<QuestionResponseDto> questionResponseList = byApproved.stream().map(q -> new QuestionResponseDto(
                 q.getId(),
                 q.getTitle(),
@@ -67,7 +68,8 @@ public class QuestionController {
                 q.getDifficulty(),
                 q.isApproved(),
                 q.isArchived(),
-                q.getPattern() != null ? q.getPattern().getName() : ""
+                q.getPattern() != null ? q.getPattern().getName() : "",
+                q.getPattern() != null ? q.getPattern().getId() : null
         )).toList();
         return ApiResponse.success(questionResponseList, "Request Success", HttpStatus.OK);
     }
@@ -100,6 +102,7 @@ public class QuestionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateQuestion(@PathVariable Long id, @RequestBody AddQuestionDto req) {
+
         // Fetch existing question
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found!"));
@@ -118,8 +121,8 @@ public class QuestionController {
 
         // Update pattern if provided
         if (req.getQuestionPatternId() != 0) {
-            Optional<QuestionPattern> pattern = questionPatternRepository.findById(req.getQuestionPatternId());
-            pattern.ifPresent(question::setPattern);
+            QuestionPattern pattern = questionPatternRepository.findById(req.getQuestionPatternId()).orElseThrow(() -> new ResourceNotFoundException("Question Pattern not found!"));
+            System.out.println(pattern.getName() + ":" + pattern.getId());
         }
 
         // Save the updated question

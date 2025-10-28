@@ -59,8 +59,9 @@
         <!-- Question Pattern -->
         <div class="flex flex-col">
             <label for="questionPatternId" class="font-medium">Question Pattern</label>
-            <p-select tabindex="-1" appendTo="body" [options]="questionPatterns" optionLabel="name" optionValue="id"
-                formControlName="questionPatternId" placeholder="Select a question pattern (optional)" class="w-full">
+            <p-select tabindex="-1" appendTo="body" [options]="filteredQuestionPatterns" optionLabel="name"
+                optionValue="id" formControlName="questionPatternId" placeholder="Select a question pattern"
+                class="w-full">
             </p-select>
         </div>
 

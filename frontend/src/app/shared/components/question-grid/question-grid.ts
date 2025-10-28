@@ -34,6 +34,7 @@ export interface Problem {
   isApproved: boolean;
   isArchived: boolean;
   patternName: string;
+  patternId?: number;
   categoryId: number;
   sheetId?: number;
 }

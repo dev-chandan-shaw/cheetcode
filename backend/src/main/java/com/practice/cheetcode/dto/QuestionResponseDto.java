@@ -15,6 +15,7 @@ public class QuestionResponseDto {
     private boolean isApproved;
     private boolean isArchived;
     private String patternName;
+    private Long patternId;
 }
 
 

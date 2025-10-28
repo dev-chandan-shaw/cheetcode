@@ -6,8 +6,7 @@
     @if (isGroupedByPattern) {
     <!-- Grouped Table -->
     <p-table [value]="filteredQuestions" [scrollable]="true" [scrollHeight]="'calc(100vh - 200px)'"
-        sortField="patternName" rowGroupMode="subheader" groupRowsBy="patternName"
-        [tableStyle]="{ 'min-width': '50rem' }">
+        sortField="patternId" rowGroupMode="subheader" groupRowsBy="patternId" [tableStyle]="{ 'min-width': '50rem' }">
 
         <ng-template #caption>
             <ng-container *ngTemplateOutlet="tableCaptionTemplate"></ng-container>
